@@ -12,7 +12,7 @@ export interface AuthenticatedRequest extends Request {
     id: string;
     email: string;
     username: string;
-    role: 'user' | 'admin' | 'salesperson';
+    role: 'user' | 'admin' | 'salesperson' | 'superadmin';
   };
 }
 
@@ -36,7 +36,7 @@ export const authenticateToken = (req: AuthenticatedRequest, res: Response, next
 
 // Admin auth guard middleware
 export const requireAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  if (!req.user || req.user.role !== 'admin') {
+  if (!req.user || (req.user.role !== 'admin' && req.user.role !== 'superadmin')) {
     return res.status(403).json({ error: 'Access denied: Admin role required' });
   }
   next();
@@ -44,8 +44,16 @@ export const requireAdmin = (req: AuthenticatedRequest, res: Response, next: Nex
 
 // Admin or Salesperson auth guard middleware
 export const requireStaff = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  if (!req.user || (req.user.role !== 'admin' && req.user.role !== 'salesperson')) {
+  if (!req.user || (req.user.role !== 'admin' && req.user.role !== 'salesperson' && req.user.role !== 'superadmin')) {
     return res.status(403).json({ error: 'Access denied: Staff role required' });
+  }
+  next();
+};
+
+// Super Admin auth guard middleware
+export const requireSuperAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  if (!req.user || req.user.role !== 'superadmin') {
+    return res.status(403).json({ error: 'Access denied: Super Admin role required' });
   }
   next();
 };
@@ -237,6 +245,130 @@ router.get('/customers/:id', authenticateToken, requireStaff, async (req: Reques
   } catch (error) {
     console.error('Get customer detail error:', error);
     res.status(500).json({ error: 'Failed to retrieve customer details' });
+  }
+});
+
+// Superadmin: Get all staff members
+router.get('/staff', authenticateToken, requireSuperAdmin, async (req: Request, res: Response) => {
+  try {
+    const result = await query(
+      "SELECT id, email, username, full_name, phone, avatar_url, role, created_at FROM public.profiles WHERE role IN ('admin', 'salesperson', 'superadmin') ORDER BY role ASC, created_at DESC"
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Get staff error:', error);
+    res.status(500).json({ error: 'Failed to retrieve staff members' });
+  }
+});
+
+// Superadmin: Create a new staff member
+router.post('/staff', authenticateToken, requireSuperAdmin, async (req: Request, res: Response) => {
+  const { email, username, full_name, phone, role, password } = req.body;
+
+  if (!email || !username || !role || !password) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  if (!['admin', 'salesperson', 'superadmin'].includes(role)) {
+    return res.status(400).json({ error: 'Invalid staff role specified' });
+  }
+
+  try {
+    // Check if user already exists
+    const userExist = await query('SELECT id FROM public.profiles WHERE email = $1 OR username = $2', [email, username]);
+    if (userExist.rows.length > 0) {
+      return res.status(400).json({ error: 'Email or username already in use' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
+    const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${username}`;
+
+    const result = await query(
+      `INSERT INTO public.profiles (email, username, full_name, phone, avatar_url, role, password_hash)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id, email, username, full_name, phone, avatar_url, role, created_at`,
+      [email, username, full_name || null, phone || null, avatarUrl, role, passwordHash]
+    );
+
+    res.status(201).json(result.rows[0]);
+  } catch (error) {
+    console.error('Create staff error:', error);
+    res.status(500).json({ error: 'Failed to create staff member' });
+  }
+});
+
+// Superadmin: Edit a staff member's details/role
+router.put('/staff/:id', authenticateToken, requireSuperAdmin, async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { full_name, phone, role, password } = req.body;
+
+  if (role && !['admin', 'salesperson', 'superadmin'].includes(role)) {
+    return res.status(400).json({ error: 'Invalid staff role specified' });
+  }
+
+  try {
+    // Check if staff member exists
+    const staffCheck = await query('SELECT id, role FROM public.profiles WHERE id = $1', [id]);
+    if (staffCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Staff member not found' });
+    }
+
+    let updateFields: string[] = [];
+    let params: any[] = [id];
+    let paramIndex = 2;
+
+    if (full_name !== undefined) {
+      updateFields.push(`full_name = $${paramIndex++}`);
+      params.push(full_name);
+    }
+    if (phone !== undefined) {
+      updateFields.push(`phone = $${paramIndex++}`);
+      params.push(phone);
+    }
+    if (role !== undefined) {
+      updateFields.push(`role = $${paramIndex++}`);
+      params.push(role);
+    }
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      const passwordHash = await bcrypt.hash(password, salt);
+      updateFields.push(`password_hash = $${paramIndex++}`);
+      params.push(passwordHash);
+    }
+
+    if (updateFields.length === 0) {
+      return res.status(400).json({ error: 'No fields to update' });
+    }
+
+    const sql = `UPDATE public.profiles SET ${updateFields.join(', ')}, updated_at = now() WHERE id = $1 RETURNING id, email, username, full_name, phone, avatar_url, role`;
+    const result = await query(sql, params);
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Update staff error:', error);
+    res.status(500).json({ error: 'Failed to update staff member' });
+  }
+});
+
+// Superadmin: Delete a staff member
+router.delete('/staff/:id', authenticateToken, requireSuperAdmin, async (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+
+  // Prevent superadmin from deleting themselves
+  if (req.user && req.user.id === id) {
+    return res.status(400).json({ error: 'Superadmin cannot delete their own account' });
+  }
+
+  try {
+    const result = await query('DELETE FROM public.profiles WHERE id = $1 RETURNING id', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Staff member not found' });
+    }
+    res.json({ message: 'Staff member deleted successfully', id });
+  } catch (error) {
+    console.error('Delete staff error:', error);
+    res.status(500).json({ error: 'Failed to delete staff member' });
   }
 });
 

@@ -35,7 +35,7 @@ DROP TYPE IF EXISTS public.payment_method CASCADE;
 DROP SEQUENCE IF EXISTS public.order_number_seq CASCADE;
 
 -- Create Enums
-CREATE TYPE public.user_role     AS ENUM ('user', 'admin', 'salesperson');
+CREATE TYPE public.user_role     AS ENUM ('user', 'admin', 'salesperson', 'superadmin');
 CREATE TYPE public.order_status  AS ENUM ('pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded');
 CREATE TYPE public.payment_status AS ENUM ('pending', 'completed', 'failed', 'refunded');
 CREATE TYPE public.payment_method AS ENUM ('mobile_money', 'card', 'paypal');

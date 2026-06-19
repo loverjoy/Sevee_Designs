@@ -8,7 +8,7 @@ export interface User {
   full_name: string | null;
   phone: string | null;
   avatar_url: string | null;
-  role: 'user' | 'admin' | 'salesperson';
+  role: 'user' | 'admin' | 'salesperson' | 'superadmin';
   created_at: string;
 }
 

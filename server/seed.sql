@@ -4,6 +4,10 @@
 -- Hashed password for 'password123' using bcrypt: $2a$10$vKBd7wA8LlhO6Fj486C3iutb1bI41V8WnB7wJ.UuI.v3/yA5CqM7G
 INSERT INTO public.profiles (id, email, username, full_name, phone, avatar_url, role, password_hash)
 VALUES
+  ('d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a', 'superadmin@seveedesigns.com', 'superadmin', 'Super Administrator', '+233244000000', 'https://api.dicebear.com/7.x/adventurer/svg?seed=superadmin', 'superadmin', '$2a$10$vKBd7wA8LlhO6Fj486C3iutb1bI41V8WnB7wJ.UuI.v3/yA5CqM7G')
+  ON CONFLICT (id) DO NOTHING;
+INSERT INTO public.profiles (id, email, username, full_name, phone, avatar_url, role, password_hash)
+VALUES
   ('a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d', 'admin@seveedesigns.com', 'admin', 'Kofi Mensah', '+233244123456', 'https://api.dicebear.com/7.x/adventurer/svg?seed=admin', 'admin', '$2a$10$vKBd7wA8LlhO6Fj486C3iutb1bI41V8WnB7wJ.UuI.v3/yA5CqM7G')
   ON CONFLICT (id) DO NOTHING;
 INSERT INTO public.profiles (id, email, username, full_name, phone, avatar_url, role, password_hash)

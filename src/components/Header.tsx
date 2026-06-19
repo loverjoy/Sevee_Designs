@@ -170,7 +170,7 @@ const Header: React.FC = () => {
             {user ? (
               <div className="relative group p-1">
                 <Link
-                  to={user.role === 'admin' ? '/admin' : user.role === 'salesperson' ? '/salesperson' : '/dashboard'}
+                  to={user.role === 'admin' || user.role === 'superadmin' ? '/admin' : user.role === 'salesperson' ? '/salesperson' : '/dashboard'}
                   className="flex items-center space-x-1 hover:text-accent transition-colors"
                 >
                   <User size={20} />
@@ -179,7 +179,7 @@ const Header: React.FC = () => {
                   </span>
                 </Link>
                 <div className="absolute right-0 w-40 bg-card border border-border shadow-card mt-2 hidden group-hover:block transition-all py-1">
-                  {user.role === 'admin' && (
+                  {(user.role === 'admin' || user.role === 'superadmin') && (
                     <Link to="/admin" className="block px-4 py-2 text-xs font-sans hover:bg-secondary">
                       Admin Portal
                     </Link>
@@ -231,7 +231,7 @@ const Header: React.FC = () => {
                 <>
                   <hr className="border-border" />
                   <Link
-                    to={user.role === 'admin' ? '/admin' : user.role === 'salesperson' ? '/salesperson' : '/dashboard'}
+                    to={user.role === 'admin' || user.role === 'superadmin' ? '/admin' : user.role === 'salesperson' ? '/salesperson' : '/dashboard'}
                     onClick={() => setMobileMenuOpen(false)}
                     className="text-accent"
                   >

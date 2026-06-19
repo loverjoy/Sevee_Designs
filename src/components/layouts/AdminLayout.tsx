@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation, Outlet } from 'react-router-dom';
-import { LayoutDashboard, Box, ShoppingBag, Tag, Home, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Box, ShoppingBag, Tag, Home, LogOut, Menu, X, Users } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const AdminLayout: React.FC = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -15,6 +15,10 @@ const AdminLayout: React.FC = () => {
     { name: 'Orders Manager', path: '/admin/orders', icon: <ShoppingBag size={16} /> },
     { name: 'Coupons Settings', path: '/admin/coupons', icon: <Tag size={16} /> },
   ];
+
+  if (user && user.role === 'superadmin') {
+    navItems.push({ name: 'Staff Management', path: '/admin/staff', icon: <Users size={16} /> });
+  }
 
   const activeClass = (path: string) => {
     return location.pathname === path

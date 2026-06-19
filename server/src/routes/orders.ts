@@ -149,7 +149,7 @@ router.get('/', authenticateToken, async (req: AuthenticatedRequest, res: Respon
     const params: any[] = [];
 
     // Filter by own user if not staff
-    if (user.role !== 'admin' && user.role !== 'salesperson') {
+    if (user.role !== 'admin' && user.role !== 'salesperson' && user.role !== 'superadmin') {
       params.push(user.id);
       sql += ` AND o.user_id = $${params.length}`;
     }
@@ -427,7 +427,7 @@ router.get('/:id', authenticateToken, async (req: AuthenticatedRequest, res: Res
     const order = orderRes.rows[0];
 
     // Auth validation: must be own order or staff
-    if (user.role !== 'admin' && user.role !== 'salesperson' && order.user_id !== user.id) {
+    if (user.role !== 'admin' && user.role !== 'salesperson' && user.role !== 'superadmin' && order.user_id !== user.id) {
       return res.status(403).json({ error: 'Access denied: You do not own this order' });
     }
 

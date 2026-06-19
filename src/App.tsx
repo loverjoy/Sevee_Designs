@@ -34,6 +34,7 @@ import AdminProductsPage from './pages/admin/AdminProductsPage';
 import AdminProductFormPage from './pages/admin/AdminProductFormPage';
 import AdminOrdersPage from './pages/admin/AdminOrdersPage';
 import AdminCouponsPage from './pages/admin/AdminCouponsPage';
+import AdminStaffPage from './pages/admin/AdminStaffPage';
 
 // Salesperson Portal Pages
 import SalespersonOrdersPage from './pages/salesperson/SalespersonOrdersPage';
@@ -61,7 +62,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: strin
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
     // Redirect role mismatch to their respective home areas
-    if (user.role === 'admin') return <Navigate to="/admin" replace />;
+    if (user.role === 'admin' || user.role === 'superadmin') return <Navigate to="/admin" replace />;
     if (user.role === 'salesperson') return <Navigate to="/salesperson" replace />;
     return <Navigate to="/dashboard" replace />;
   }
@@ -114,7 +115,7 @@ const App: React.FC = () => {
               <Route
                 path="/admin/*"
                 element={
-                  <ProtectedRoute allowedRoles={['admin']}>
+                  <ProtectedRoute allowedRoles={['admin', 'superadmin']}>
                     <AdminLayout />
                   </ProtectedRoute>
                 }
@@ -125,6 +126,7 @@ const App: React.FC = () => {
                 <Route path="products/:id/edit" element={<AdminProductFormPage />} />
                 <Route path="orders" element={<AdminOrdersPage />} />
                 <Route path="coupons" element={<AdminCouponsPage />} />
+                <Route path="staff" element={<AdminStaffPage />} />
                 <Route path="*" element={<Navigate to="/admin" replace />} />
               </Route>
 

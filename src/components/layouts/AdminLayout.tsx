@@ -35,9 +35,14 @@ const AdminLayout: React.FC = () => {
     <div className="min-h-screen bg-background text-foreground flex flex-col md:flex-row font-sans">
       {/* Mobile Header */}
       <div className="md:hidden bg-card border-b border-border p-4 flex items-center justify-between z-30">
-        <Link to="/admin" className="flex flex-col">
-          <span className="font-serif text-lg font-bold text-foreground">SEVEE ADMIN</span>
-          <span className="font-sans text-[8px] tracking-[0.2em] text-muted-foreground uppercase -mt-0.5">Control Panel</span>
+        <Link to="/admin" className="flex items-center space-x-2">
+          <div className="w-8 h-8 rounded-full overflow-hidden border border-border flex items-center justify-center bg-card shrink-0">
+            <img src="/logo.jpg" alt="SeVee Designs Logo" className="w-full h-full object-cover" />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-serif text-base font-bold text-foreground leading-tight">SEVEE ADMIN</span>
+            <span className="font-sans text-[8px] tracking-[0.2em] text-muted-foreground uppercase">Control Panel</span>
+          </div>
         </Link>
         <button
           onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
@@ -57,9 +62,14 @@ const AdminLayout: React.FC = () => {
         <div className="space-y-8">
           {/* Logo Heading */}
           <div className="border-b border-border pb-4 hidden md:block">
-            <Link to="/admin" className="flex flex-col">
-              <span className="font-serif text-xl font-bold text-foreground">SEVEE ADMIN</span>
-              <span className="font-sans text-[8px] tracking-[0.2em] text-muted-foreground uppercase -mt-0.5">Control Panel</span>
+            <Link to="/admin" className="flex items-center space-x-3 group">
+              <div className="w-9 h-9 rounded-full overflow-hidden border border-border flex items-center justify-center bg-card shrink-0 transition-transform group-hover:scale-105 duration-300">
+                <img src="/logo.jpg" alt="SeVee Designs Logo" className="w-full h-full object-cover" />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-serif text-lg font-bold text-foreground leading-tight">SEVEE ADMIN</span>
+                <span className="font-sans text-[8px] tracking-[0.2em] text-muted-foreground uppercase -mt-0.5">Control Panel</span>
+              </div>
             </Link>
           </div>
 

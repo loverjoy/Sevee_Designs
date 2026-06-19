@@ -8,13 +8,18 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
         {/* Brand Info */}
         <div className="space-y-4">
-          <Link to="/" className="flex flex-col">
-            <span className="font-serif text-2xl font-bold tracking-tight text-primary-foreground">
-              SeVee Designs
-            </span>
-            <span className="font-sans text-[9px] tracking-[0.25em] text-muted-foreground uppercase -mt-1">
-              Premium Furniture
-            </span>
+          <Link to="/" className="flex items-center space-x-3 group">
+            <div className="w-10 h-10 rounded-full overflow-hidden border border-border/20 flex items-center justify-center bg-card-foreground/10 shrink-0 transition-transform group-hover:scale-105 duration-300">
+              <img src="/logo.jpg" alt="SeVee Designs Logo" className="w-full h-full object-cover" />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-serif text-xl font-bold tracking-tight text-primary-foreground leading-tight">
+                SeVee Designs
+              </span>
+              <span className="font-sans text-[9px] tracking-[0.25em] text-muted-foreground uppercase -mt-0.5">
+                Premium Furniture
+              </span>
+            </div>
           </Link>
           <p className="font-sans text-xs text-muted-foreground leading-relaxed">
             Crafting spaces that inspire. We design and manufacture architectural, high-grade hardwood furniture in Accra, Ghana.

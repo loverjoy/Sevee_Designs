@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { ShoppingCart, Heart, LogOut, Loader2, ArrowRight, Eye, Calendar, MapPin, Tag } from 'lucide-react';
+import { ShoppingCart, Heart, LogOut, Loader2, ArrowRight, Eye, Calendar, MapPin, Tag, Check, AlertCircle } from 'lucide-react';
 import client from '../api/client';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 
 const DashboardPage: React.FC = () => {
   const { user, logout, updateProfile } = useAuth();
-  const { addItem } = useCart();
+  const { addItem, clearCart } = useCart();
   const { wishlist, removeFromWishlist } = useWishlist();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'overview';
@@ -27,6 +27,17 @@ const DashboardPage: React.FC = () => {
   const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
   const [expandedOrderItems, setExpandedOrderItems] = useState<any[]>([]);
   const [loadingItems, setLoadingItems] = useState(false);
+
+  // Clear cart and show toast on payment success redirect
+  useEffect(() => {
+    if (searchParams.get('success') === 'true') {
+      clearCart();
+      const newParams = new URLSearchParams(searchParams);
+      newParams.delete('success');
+      setSearchParams(newParams);
+      toast.success('Your order was placed successfully!');
+    }
+  }, [searchParams, clearCart, setSearchParams]);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -250,6 +261,81 @@ const DashboardPage: React.FC = () => {
                         {/* Order Expanded Details Panel */}
                         {isExpanded && (
                           <div className="border-t border-border p-6 bg-background/50 space-y-6 text-xs leading-relaxed">
+                            {/* Cancellation / Refund Alert Banner */}
+                            {['cancelled', 'refunded'].includes(o.status) && (
+                              <div className="bg-destructive/10 border border-destructive/20 text-destructive text-[11px] p-4 flex items-center space-x-3">
+                                <AlertCircle size={18} />
+                                <div>
+                                  <p className="font-bold uppercase tracking-wider">Order {o.status}</p>
+                                  <p className="text-[10px] opacity-85 mt-0.5">This transaction has been terminated. Please contact support if you have any questions.</p>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Visual Tracking Stepper */}
+                            {!['cancelled', 'refunded'].includes(o.status) && (
+                              <div className="border border-border bg-card p-4 shadow-card">
+                                <h4 className="font-serif text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-4">
+                                  Order Tracking Status
+                                </h4>
+                                
+                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-2">
+                                  {['pending', 'confirmed', 'processing', 'shipped', 'delivered'].map((stepName, idx, arr) => {
+                                    const statusSteps = ['pending', 'confirmed', 'processing', 'shipped', 'delivered'];
+                                    const statusIdx = statusSteps.indexOf(o.status);
+                                    const isActive = statusIdx >= idx;
+                                    const isCurrent = statusIdx === idx;
+                                    return (
+                                      <React.Fragment key={stepName}>
+                                        <div className="flex items-center space-x-2.5">
+                                          <div
+                                            className={`w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0 transition-all ${
+                                              isCurrent
+                                                ? 'bg-accent text-accent-foreground ring-4 ring-accent/20'
+                                                : isActive
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'bg-secondary text-muted-foreground border border-border'
+                                            }`}
+                                          >
+                                            {isActive && !isCurrent ? <Check size={10} /> : idx + 1}
+                                          </div>
+                                          <div>
+                                            <span
+                                              className={`block text-[9px] uppercase tracking-wider font-bold ${
+                                                isCurrent ? 'text-accent' : isActive ? 'text-foreground' : 'text-muted-foreground'
+                                              }`}
+                                            >
+                                              {stepName}
+                                            </span>
+                                            <span className="block text-[8px] text-muted-foreground capitalize">
+                                              {isCurrent ? 'Current Status' : isActive ? 'Completed' : 'Upcoming'}
+                                            </span>
+                                          </div>
+                                        </div>
+                                        {idx < arr.length - 1 && (
+                                          <div className={`hidden md:block flex-grow h-0.5 mx-2 ${statusIdx > idx ? 'bg-primary' : 'bg-border'}`}></div>
+                                        )}
+                                      </React.Fragment>
+                                    );
+                                  })}
+                                </div>
+                                
+                                {o.tracking_number && (
+                                  <div className="border-t border-border mt-4 pt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-[10px]">
+                                    <span className="text-muted-foreground">Carrier Tracking Number: <strong className="text-foreground">{o.tracking_number}</strong></span>
+                                    <a
+                                      href={`https://track.seveedesigns.com/${o.tracking_number}`}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="text-accent hover:underline font-bold uppercase tracking-wider"
+                                    >
+                                      Track Package Details
+                                    </a>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                               {/* Shipping address info */}
                               <div className="space-y-2">

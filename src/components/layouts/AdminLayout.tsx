@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation, Outlet } from 'react-router-dom';
-import { LayoutDashboard, Box, ShoppingBag, Tag, Home, LogOut, Menu, X, Users } from 'lucide-react';
+import { LayoutDashboard, Box, ShoppingBag, Tag, Home, LogOut, Menu, X, Users, BarChart } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const AdminLayout: React.FC = () => {
@@ -13,6 +13,7 @@ const AdminLayout: React.FC = () => {
     { name: 'Dashboard', path: '/admin', icon: <LayoutDashboard size={16} /> },
     { name: 'Products Catalog', path: '/admin/products', icon: <Box size={16} /> },
     { name: 'Orders Manager', path: '/admin/orders', icon: <ShoppingBag size={16} /> },
+    { name: 'Sales Reports', path: '/admin/reports', icon: <BarChart size={16} /> },
     { name: 'Coupons Settings', path: '/admin/coupons', icon: <Tag size={16} /> },
   ];
 

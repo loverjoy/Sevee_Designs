@@ -104,7 +104,13 @@ router.post('/register', async (req: Request, res: Response) => {
     res.status(201).json({ token, user });
   } catch (error: any) {
     console.error('Registration error:', error);
-    res.status(500).json({ error: 'Internal server error during registration' });
+    if (error.code === '23505') {
+      return res.status(409).json({ error: 'Username or email already registered' });
+    }
+    res.status(500).json({ 
+      error: 'Internal server error during registration',
+      details: error.message || String(error)
+    });
   }
 });
 
@@ -148,7 +154,10 @@ router.post('/login', async (req: Request, res: Response) => {
     res.json({ token, user });
   } catch (error: any) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'Internal server error during login' });
+    res.status(500).json({ 
+      error: 'Internal server error during login',
+      details: error.message || String(error)
+    });
   }
 });
 

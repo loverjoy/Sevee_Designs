@@ -82,7 +82,7 @@ const LoginPage: React.FC = () => {
       try {
         // Direct simulation: registers or logins a mock Google user via API
         const mockGoogleUser = {
-          email: 'google_user@miaoda.com',
+          email: 'google_user@seveedesigns.com',
           username: 'google_user',
           full_name: 'Kwadwo Bonsu',
           phone: '+233240000000',
@@ -100,7 +100,7 @@ const LoginPage: React.FC = () => {
         toast.success('Google authentication successful!');
         navigate(redirectPath);
       } catch (error: any) {
-        toast.error('Google Sign-In failed');
+        toast.error(error || 'Google Sign-In failed');
       } finally {
         setLoading(false);
       }

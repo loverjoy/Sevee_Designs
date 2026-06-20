@@ -35,6 +35,7 @@ import AdminProductFormPage from './pages/admin/AdminProductFormPage';
 import AdminOrdersPage from './pages/admin/AdminOrdersPage';
 import AdminCouponsPage from './pages/admin/AdminCouponsPage';
 import AdminStaffPage from './pages/admin/AdminStaffPage';
+import AdminReportsPage from './pages/admin/AdminReportsPage';
 
 // Salesperson Portal Pages
 import SalespersonOrdersPage from './pages/salesperson/SalespersonOrdersPage';
@@ -125,6 +126,7 @@ const App: React.FC = () => {
                 <Route path="products/new" element={<AdminProductFormPage />} />
                 <Route path="products/:id/edit" element={<AdminProductFormPage />} />
                 <Route path="orders" element={<AdminOrdersPage />} />
+                <Route path="reports" element={<AdminReportsPage />} />
                 <Route path="coupons" element={<AdminCouponsPage />} />
                 <Route path="staff" element={<AdminStaffPage />} />
                 <Route path="*" element={<Navigate to="/admin" replace />} />

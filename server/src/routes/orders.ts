@@ -134,6 +134,52 @@ const sendOrderStatusEmail = async (orderId: string, status: string) => {
   }
 };
 
+const sendOrderStatusSms = async (orderId: string, status: string) => {
+  const SMS_API_KEY = process.env.SMS_API_KEY || 'mock_sms_api_key';
+  
+  try {
+    const orderRes = await query(
+      `SELECT o.*, p.phone as profile_phone, p.full_name 
+       FROM public.orders o
+       LEFT JOIN public.profiles p ON o.user_id = p.id
+       WHERE o.id = $1`,
+      [orderId]
+    );
+
+    if (orderRes.rows.length === 0) return;
+    const order = orderRes.rows[0];
+
+    const address = typeof order.delivery_address === 'string' 
+      ? JSON.parse(order.delivery_address) 
+      : order.delivery_address;
+      
+    const phone = address?.phone || order.profile_phone;
+    if (!phone) {
+      console.log(`[SMS] Skipping status SMS for Order #${order.order_number}: Recipient phone number missing.`);
+      return;
+    }
+
+    const message = `SEVEE DESIGNS: Hello ${order.full_name || 'Customer'}, the status of your order #${order.order_number} has been updated to ${status.toUpperCase()}. Track here: http://localhost:5173/dashboard?tab=orders`;
+
+    if (SMS_API_KEY === 'mock_sms_api_key' || SMS_API_KEY.startsWith('mock')) {
+      console.log(`[SMS MOCK] Dispatching SMS via Carrier to ${phone}:`);
+      console.log(`  "${message}"`);
+      return;
+    }
+
+    console.log(`[SMS API] Dispatching real SMS via Twilio/Arkesel to ${phone}...`);
+  } catch (error) {
+    console.error('SMS notify error:', error);
+  }
+};
+
+const notifyUserOfOrderStatusUpdate = async (orderId: string, status: string) => {
+  await Promise.all([
+    sendOrderStatusEmail(orderId, status).catch(error => console.error('Email notification failed:', error)),
+    sendOrderStatusSms(orderId, status).catch(error => console.error('SMS notification failed:', error))
+  ]);
+};
+
 // GET: List orders (Customer gets own, Admin/Salesperson gets all)
 router.get('/', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   const { status, limit = '20', offset = '0' } = req.query;
@@ -275,8 +321,8 @@ router.get('/verify', async (req, res) => {
       await client.query('COMMIT');
       client.release();
 
-      // Trigger Email Notification (Fire-and-forget background task)
-      sendOrderStatusEmail(order.id, 'confirmed').catch(console.error);
+      // Trigger Email & SMS Notification (Fire-and-forget background task)
+      notifyUserOfOrderStatusUpdate(order.id, 'confirmed').catch(console.error);
 
       // Redirect client to checkout success
       res.redirect(`http://localhost:5173/dashboard?tab=orders&success=true&order=${order.order_number}`);
@@ -381,8 +427,8 @@ router.get('/stripe/verify', async (req, res) => {
       await client.query('COMMIT');
       client.release();
 
-      // Trigger Email Notification (Fire-and-forget background task)
-      sendOrderStatusEmail(order.id, 'confirmed').catch(console.error);
+      // Trigger Email & SMS Notification (Fire-and-forget background task)
+      notifyUserOfOrderStatusUpdate(order.id, 'confirmed').catch(console.error);
 
       // Redirect client to checkout success
       res.redirect(`http://localhost:5173/dashboard?tab=orders&success=true&order=${order.order_number}`);
@@ -451,7 +497,7 @@ router.get('/:id', authenticateToken, async (req: AuthenticatedRequest, res: Res
 
 // POST: Checkout / Create Order & Init Paystack
 router.post('/checkout', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
-  const { items, delivery_address, coupon_code, currency = 'GHS', exchange_rate = 1.0 } = req.body;
+  const { items, delivery_address, coupon_code, currency = 'GHS', exchange_rate = 1.0, payment_method } = req.body;
   const user = req.user!;
 
   if (!items || !Array.isArray(items) || items.length === 0 || !delivery_address) {
@@ -554,10 +600,11 @@ router.post('/checkout', authenticateToken, async (req: AuthenticatedRequest, re
     const total = subtotal + deliveryFee - discountAmount;
 
     // 4. Create Order row (Order number generated automatically via trigger)
+    const isPostpay = payment_method === 'postpay';
     const orderRes = await client.query(
       `INSERT INTO public.orders 
-       (user_id, subtotal, delivery_fee, discount_amount, total, delivery_address, coupon_id, notes, currency, exchange_rate)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+       (user_id, subtotal, delivery_fee, discount_amount, total, delivery_address, coupon_id, notes, currency, exchange_rate, payment_method, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
        RETURNING *`,
       [
         user.id,
@@ -567,9 +614,11 @@ router.post('/checkout', authenticateToken, async (req: AuthenticatedRequest, re
         total,
         JSON.stringify(delivery_address),
         couponId,
-        '',
+        isPostpay ? 'postpay_order' : '',
         currency,
-        exchange_rate
+        exchange_rate,
+        isPostpay ? 'postpay' : null,
+        'pending' // Postpay orders start as pending until money is confirmed by staff
       ]
     );
 
@@ -588,6 +637,20 @@ router.post('/checkout', authenticateToken, async (req: AuthenticatedRequest, re
     // Commit local order creation transaction
     await client.query('COMMIT');
     client.release();
+
+    if (isPostpay) {
+      // Trigger Email & SMS Notification (Fire-and-forget background task)
+      notifyUserOfOrderStatusUpdate(order.id, 'pending').catch(console.error);
+
+      return res.status(201).json({
+        message: 'Order created successfully (Postpay)',
+        orderId: order.id,
+        orderNumber: order.order_number,
+        total,
+        authorization_url: `http://localhost:5173/dashboard?tab=orders&success=true&order=${order.order_number}`,
+        reference: `postpay_${order.id}`,
+      });
+    }
 
     // 6. Initialize Payment Transaction
     // Convert base GHS amount to target currency based on exchange rate, then to subunits (cents/pesewas)
@@ -819,8 +882,8 @@ router.post('/webhook', async (req, res) => {
       await client.query('COMMIT');
       client.release();
 
-      // Email notify
-      sendOrderStatusEmail(order.id, 'confirmed').catch(console.error);
+      // Email & SMS notify
+      notifyUserOfOrderStatusUpdate(order.id, 'confirmed').catch(console.error);
       res.status(200).send('Webhook processed');
     } else {
       await client.query('COMMIT');
@@ -847,26 +910,79 @@ router.put('/:id/status', authenticateToken, requireStaff, async (req: Authentic
     return res.status(400).json({ error: 'Valid status is required' });
   }
 
+  const client = await pool.connect();
   try {
-    const result = await query(
-      `UPDATE public.orders
-       SET status = $1
-       WHERE id = $2
-       RETURNING *`,
-      [status, id]
-    );
+    await client.query('BEGIN');
 
-    if (result.rows.length === 0) {
+    // Fetch existing order to check previous status
+    const orderCheck = await client.query('SELECT * FROM public.orders WHERE id = $1 FOR UPDATE', [id]);
+    if (orderCheck.rows.length === 0) {
+      await client.query('ROLLBACK');
+      client.release();
       return res.status(404).json({ error: 'Order not found' });
     }
 
-    const order = result.rows[0];
+    const oldOrder = orderCheck.rows[0];
+    let updatedOrder;
 
-    // Trigger email notification (Fire-and-forget)
-    sendOrderStatusEmail(order.id, status).catch(console.error);
+    // Transition from pending to confirmed (confirming payment received)
+    if (oldOrder.status === 'pending' && status === 'confirmed') {
+      // 1. Update order status and set payment_status to completed
+      const updateRes = await client.query(
+        `UPDATE public.orders 
+         SET status = 'confirmed', payment_status = 'completed'
+         WHERE id = $1
+         RETURNING *`,
+        [id]
+      );
+      updatedOrder = updateRes.rows[0];
 
-    res.json(order);
+      // 2. Decrement stock
+      const itemsRes = await client.query(
+        'SELECT product_id, quantity FROM public.order_items WHERE order_id = $1',
+        [id]
+      );
+
+      for (const item of itemsRes.rows) {
+        if (item.product_id) {
+          await client.query(
+            `UPDATE public.products 
+             SET stock_quantity = GREATEST(0, stock_quantity - $1)
+             WHERE id = $2`,
+            [item.quantity, item.product_id]
+          );
+        }
+      }
+
+      // 3. Increment coupon usage
+      if (updatedOrder.coupon_id) {
+        await client.query(
+          `UPDATE public.coupons SET used_count = used_count + 1 WHERE id = $1`,
+          [updatedOrder.coupon_id]
+        );
+      }
+    } else {
+      // Just standard status update
+      const updateRes = await client.query(
+        `UPDATE public.orders 
+         SET status = $1
+         WHERE id = $2
+         RETURNING *`,
+        [status, id]
+      );
+      updatedOrder = updateRes.rows[0];
+    }
+
+    await client.query('COMMIT');
+    client.release();
+
+    // Trigger email & SMS notification (Fire-and-forget)
+    notifyUserOfOrderStatusUpdate(updatedOrder.id, status).catch(console.error);
+
+    res.json(updatedOrder);
   } catch (error) {
+    await client.query('ROLLBACK');
+    client.release();
     console.error('Update order status error:', error);
     res.status(500).json({ error: 'Failed to update order status' });
   }

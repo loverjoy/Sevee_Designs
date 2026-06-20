@@ -16,7 +16,7 @@ VALUES
   ON CONFLICT (id) DO NOTHING;
 INSERT INTO public.profiles (id, email, username, full_name, phone, avatar_url, role, password_hash)
 VALUES
-  ('c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f', 'customer@miaoda.com', 'customer', 'Kwame Nkrumah', '+233201112222', 'https://api.dicebear.com/7.x/adventurer/svg?seed=customer', 'user', '$2a$10$vKBd7wA8LlhO6Fj486C3iutb1bI41V8WnB7wJ.UuI.v3/yA5CqM7G')
+  ('c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f', 'customer@seveedesigns.com', 'customer', 'Kwame Nkrumah', '+233201112222', 'https://api.dicebear.com/7.x/adventurer/svg?seed=customer', 'user', '$2a$10$vKBd7wA8LlhO6Fj486C3iutb1bI41V8WnB7wJ.UuI.v3/yA5CqM7G')
   ON CONFLICT (id) DO NOTHING;
 
 -- 2. Insert Categories

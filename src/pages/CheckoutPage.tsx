@@ -68,6 +68,7 @@ const CheckoutPage: React.FC = () => {
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'online' | 'postpay'>('online');
 
   // Fetch delivery fee when country or region changes
   useEffect(() => {
@@ -178,7 +179,8 @@ const CheckoutPage: React.FC = () => {
         delivery_address: deliveryAddress,
         coupon_code: appliedCoupon ? appliedCoupon.code : null,
         currency,
-        exchange_rate: exchangeRate
+        exchange_rate: exchangeRate,
+        payment_method: paymentMethod === 'postpay' ? 'postpay' : null
       };
 
       // Create order and retrieve Paystack URL
@@ -393,6 +395,35 @@ const CheckoutPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Choose Payment Method */}
+              <div className="border border-border bg-card p-6 shadow-card space-y-4">
+                <h3 className="font-serif text-lg font-bold">Choose Payment Method</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <button
+                    onClick={() => setPaymentMethod('online')}
+                    className={`p-4 border text-left text-xs uppercase tracking-wider font-bold transition-all flex flex-col justify-between ${
+                      paymentMethod === 'online'
+                        ? 'border-accent bg-accent/5 text-foreground'
+                        : 'border-border bg-background text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <span className="font-bold text-foreground">Secure Card / Momo</span>
+                    <span className="text-[10px] text-muted-foreground font-normal normal-case mt-1">Pay online securely via Paystack/Stripe.</span>
+                  </button>
+                  <button
+                    onClick={() => setPaymentMethod('postpay')}
+                    className={`p-4 border text-left text-xs uppercase tracking-wider font-bold transition-all flex flex-col justify-between ${
+                      paymentMethod === 'postpay'
+                        ? 'border-accent bg-accent/5 text-foreground'
+                        : 'border-border bg-background text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    <span className="font-bold text-foreground">Postpay (Pay on Delivery)</span>
+                    <span className="text-[10px] text-muted-foreground font-normal normal-case mt-1">Place order now, pay in cash or MOMO on arrival.</span>
+                  </button>
+                </div>
+              </div>
+
               {/* Coupon Form */}
               <div className="border border-border bg-card p-6 shadow-card space-y-4">
                 <h3 className="font-serif text-lg font-bold">Promotions</h3>
@@ -440,11 +471,15 @@ const CheckoutPage: React.FC = () => {
               <div className="border border-border bg-card p-6 shadow-card text-center space-y-6">
                 <ShieldCheck className="text-accent mx-auto" size={40} />
                 <div className="space-y-2">
-                  <h3 className="font-serif text-lg font-bold">Secure Paystack Payment</h3>
+                  <h3 className="font-serif text-lg font-bold">
+                    {paymentMethod === 'postpay' ? 'Confirm Postpay Order' : 'Secure Online Payment'}
+                  </h3>
                   <p className="text-xs text-muted-foreground max-w-md mx-auto leading-relaxed">
-                    {currency === 'GHS'
-                      ? 'You will be securely redirected to Paystack to complete your purchase using Mobile Money, Card, or Bank transfer.'
-                      : 'You will be securely redirected to Paystack to complete your purchase using your international Card.'
+                    {paymentMethod === 'postpay'
+                      ? 'Your order will be created immediately. You will pay on delivery using Cash or Mobile Money.'
+                      : (currency === 'GHS'
+                        ? 'You will be securely redirected to Paystack to complete your purchase using Mobile Money, Card, or Bank transfer.'
+                        : 'You will be securely redirected to Paystack to complete your purchase using your international Card.')
                     }
                   </p>
                 </div>
@@ -470,7 +505,7 @@ const CheckoutPage: React.FC = () => {
                       </>
                     ) : (
                       <>
-                        <span>Pay {formatPrice(grandTotal)} Now</span>
+                        <span>{paymentMethod === 'postpay' ? 'Place Postpay Order' : `Pay ${formatPrice(grandTotal)} Now`}</span>
                         <ArrowRight size={14} />
                       </>
                     )}

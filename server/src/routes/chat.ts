@@ -3,6 +3,30 @@ import { query } from '../db';
 
 const router = Router();
 
+const rateLimitWindowMs = 60 * 1000; // 1 minute
+const rateLimitMaxRequests = 30; // max 30 requests per minute per IP
+const ipRequestCounts = new Map<string, { count: number; resetTime: number }>();
+
+const chatbotRateLimiter = (req: Request, res: Response, next: any) => {
+  const ip = (req.headers['x-forwarded-for'] as string) || req.ip || req.socket.remoteAddress || 'unknown';
+  const now = Date.now();
+  const limitInfo = ipRequestCounts.get(ip);
+
+  if (!limitInfo || now > limitInfo.resetTime) {
+    ipRequestCounts.set(ip, { count: 1, resetTime: now + rateLimitWindowMs });
+    return next();
+  }
+
+  limitInfo.count += 1;
+  if (limitInfo.count > rateLimitMaxRequests) {
+    return res.status(429).json({
+      error: 'Too many chatbot requests. Please wait a moment before trying again.'
+    });
+  }
+
+  next();
+};
+
 // Regular expressions to detect order numbers
 // SeVee order numbers look like: SD-YYYYMMDD-NNNNNN (e.g., SD-20260620-001001)
 const orderNumRegex = /\bSD-\d{8}-\d{6}\b/i;
@@ -70,7 +94,7 @@ const findOrderInDb = async (orderNum: string) => {
 };
 
 // Route: POST /api/chat
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', chatbotRateLimiter, async (req: Request, res: Response) => {
   const { message, history = [] } = req.body as { message: string; history: ChatMessage[] };
 
   if (!message) {
@@ -83,6 +107,8 @@ router.post('/', async (req: Request, res: Response) => {
   let dbContext = '';
   let foundOrder: any = null;
   let foundProducts: any[] = [];
+  let genuineProduct: any = null;
+  let invalidCodeMatched = false;
 
   // Check for item code in message (e.g. SV-OAK-1001)
   const itemCodeRegex = /\b(SV-[A-Z0-9]+-\d+)\b/i;
@@ -99,9 +125,11 @@ router.post('/', async (req: Request, res: Response) => {
       );
       if (productByCode.rows.length > 0) {
         const prod = productByCode.rows[0];
+        genuineProduct = prod;
         dbContext += `\n[DATABASE CONTEXT: Genuine item verified! Item code "${matchedCode}" corresponds to "${prod.name}" in category "${prod.category_name}". Current price is GHS ${prod.sale_price || prod.price}. Stock: ${prod.stock_quantity} units available. Confirm to the user that this is a genuine SeVee Designs product.]`;
         foundProducts.push(prod);
       } else {
+        invalidCodeMatched = true;
         dbContext += `\n[DATABASE CONTEXT: The user queried item code "${matchedCode}", but no active product with this code was found in the database. Tell them this code could not be verified in our registry.]`;
       }
     } catch (err) {
@@ -213,7 +241,11 @@ Key brand details to use:
   // 3. Fallback Smart Rule-Based Engine
   let responseText = '';
   
-  if (foundOrder) {
+  if (genuineProduct) {
+    responseText = `Yes! I can confirm that **${genuineProduct.item_code}** is a genuine SeVee Designs product. It corresponds to our **${genuineProduct.name}** in the **${genuineProduct.category_name}** category, currently priced at GHS ${genuineProduct.sale_price || genuineProduct.price}. We currently have ${genuineProduct.stock_quantity} units available in stock.`;
+  } else if (invalidCodeMatched) {
+    responseText = `I searched our registry for the item code you provided, but could not verify it as a genuine SeVee Designs product. Please make sure the code is typed correctly.`;
+  } else if (foundOrder) {
     responseText = `Hello! I found your order **${foundOrder.order_number}**. The current status is **${foundOrder.status.toUpperCase()}**. It was placed on ${new Date(foundOrder.created_at).toLocaleDateString()} and contains: ${foundOrder.items.map((i: any) => `${i.quantity}x ${i.product_name}`).join(', ')}. Total: ${foundOrder.currency} ${parseFloat(foundOrder.total).toFixed(2)}. ${foundOrder.tracking_number ? `Tracking number: ${foundOrder.tracking_number}` : ''}`;
   } else if (message.match(orderNumRegex)) {
     responseText = `I searched for the order number you provided, but could not find a matching order in our database. Please double-check the order number (it should look like SD-YYYYMMDD-NNNNNN) and try again.`;

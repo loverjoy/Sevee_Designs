@@ -405,6 +405,11 @@ router.get('/stripe/verify', async (req, res) => {
 
       for (const item of itemsRes.rows) {
         if (item.product_id) {
+          // Lock product row to prevent race conditions during updates
+          await client.query(
+            'SELECT stock_quantity FROM public.products WHERE id = $1 FOR UPDATE',
+            [item.product_id]
+          );
           await client.query(
             `UPDATE public.products 
              SET stock_quantity = GREATEST(0, stock_quantity - $1)
@@ -526,7 +531,7 @@ router.post('/checkout', authenticateToken, async (req: AuthenticatedRequest, re
       const { product_id, quantity } = cartItem;
       
       const prodRes = await client.query(
-        'SELECT id, name, price, sale_price, stock_quantity, images FROM public.products WHERE id = $1 AND is_active = true',
+        'SELECT id, name, price, sale_price, stock_quantity, images FROM public.products WHERE id = $1 AND is_active = true FOR UPDATE',
         [product_id]
       );
 
@@ -810,10 +815,11 @@ router.post('/webhook', async (req, res) => {
     return res.status(401).send('Signature missing');
   }
 
-  // Verify signature
+  // Verify signature using captured rawBody
+  const rawBody = (req as any).rawBody || Buffer.from(JSON.stringify(req.body));
   const hash = crypto
     .createHmac('sha512', PAYSTACK_SECRET_KEY)
-    .update(JSON.stringify(req.body))
+    .update(rawBody)
     .digest('hex');
 
   if (hash !== signature && !PAYSTACK_SECRET_KEY.startsWith('sk_test_mock')) {
@@ -862,6 +868,11 @@ router.post('/webhook', async (req, res) => {
 
       for (const item of itemsRes.rows) {
         if (item.product_id) {
+          // Lock product row to prevent race conditions during updates
+          await client.query(
+            'SELECT stock_quantity FROM public.products WHERE id = $1 FOR UPDATE',
+            [item.product_id]
+          );
           await client.query(
             `UPDATE public.products 
              SET stock_quantity = GREATEST(0, stock_quantity - $1)

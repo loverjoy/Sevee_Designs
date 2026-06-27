@@ -43,8 +43,12 @@ app.use(cors({
   credentials: true,
 }));
 
-// Body parser
-app.use(express.json());
+// Body parser with raw body buffer verification
+app.use(express.json({
+  verify: (req: any, res, buf) => {
+    req.rawBody = buf;
+  }
+}));
 app.use(express.urlencoded({ extended: true }));
 
 // Ensure upload directory exists

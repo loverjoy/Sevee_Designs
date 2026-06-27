@@ -9,24 +9,62 @@ import { toast } from 'sonner';
 import useSEO from '../hooks/useSEO';
 
 // Standard regions of Ghana
-const GHANA_REGIONS = [
-  'Greater Accra',
-  'Ashanti',
-  'Central',
-  'Eastern',
-  'Volta',
-  'Western',
-  'Western North',
-  'Northern',
-  'Upper East',
-  'Upper West',
-  'Bono',
-  'Bono East',
-  'Ahafo',
-  'Savannah',
-  'North East',
-  'Oti'
+const US_STATES = [
+  'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia',
+  'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland',
+  'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey',
+  'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina',
+  'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West axis', 'West Virginia', 'Wisconsin', 'Wyoming'
 ];
+
+const NIGERIA_STATES = [
+  'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa', 'Benue', 'Borno', 'Cross River', 'Delta',
+  'Ebonyi', 'Edo', 'Ekiti', 'Enugu', 'FCT (Abuja)', 'Gombe', 'Imo', 'Jigawa', 'Kaduna', 'Kano',
+  'Katsina', 'Kebbi', 'Kogi', 'Kwara', 'Lagos', 'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun',
+  'Oyo', 'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara'
+];
+
+const UK_COUNTRIES = ['England', 'Scotland', 'Wales', 'Northern Ireland'];
+
+const UK_ENGLAND_COUNTIES = [
+  'Greater London', 'Greater Manchester', 'West Midlands', 'West Yorkshire', 'Merseyside', 'South Yorkshire', 
+  'Tyne and Wear', 'Kent', 'Essex', 'Hampshire', 'Lancashire', 'Surrey', 'Hertfordshire', 'Norfolk', 
+  'North Yorkshire', 'Other England County'
+];
+
+const UK_SCOTLAND_COUNTIES = [
+  'Glasgow', 'Edinburgh', 'Fife', 'North Lanarkshire', 'South Lanarkshire', 'Aberdeenshire', 'Highland', 
+  'Dundee', 'Aberdeen', 'West Lothian', 'Renfrewshire', 'Other Scotland County'
+];
+
+const UK_WALES_COUNTIES = [
+  'Cardiff', 'Swansea', 'Rhondda Cynon Taf', 'Carmarthenshire', 'Caerphilly', 'Flintshire', 'Newport', 
+  'Bridgend', 'Neath Port Talbot', 'Other Wales County'
+];
+
+const UK_NI_COUNTIES = [
+  'Antrim', 'Armagh', 'Down', 'Fermanagh', 'Londonderry', 'Tyrone'
+];
+
+const CANADA_PROVINCES = [
+  'Alberta', 'British Columbia', 'Manitoba', 'New Brunswick', 'Newfoundland and Labrador', 'Nova Scotia',
+  'Ontario', 'Prince Edward Island', 'Quebec', 'Saskatchewan', 'Northwest Territories', 'Nunavut', 'Yukon'
+];
+
+const GERMANY_STATES = [
+  'Baden-Württemberg', 'Bavaria', 'Berlin', 'Brandenburg', 'Bremen', 'Hamburg', 'Hesse', 'Lower Saxony',
+  'Mecklenburg-Vorpommern', 'North Rhine-Westphalia', 'Rhineland-Palatinate', 'Saarland', 'Saxony', 'Saxony-Anhalt',
+  'Schleswig-Holstein', 'Thuringia'
+];
+
+const SOUTH_AFRICA_PROVINCES = [
+  'Eastern Cape', 'Free State', 'Gauteng', 'KwaZulu-Natal', 'Limpopo', 'Mpumalanga', 'North West', 'Northern Cape', 'Western Cape'
+];
+
+const GHANA_REGIONS = [
+  'Greater Accra', 'Ashanti', 'Central', 'Eastern', 'Volta', 'Western', 'Western North', 'Northern', 'Upper East', 'Upper West', 'Bono', 'Bono East', 'Ahafo', 'Savannah', 'North East', 'Oti'
+];
+
 
 const CheckoutPage: React.FC = () => {
   useSEO({
@@ -47,6 +85,39 @@ const CheckoutPage: React.FC = () => {
     }
   }, [user, navigate]);
 
+  // Pre-populate saved shipping address
+  useEffect(() => {
+    const fetchSavedAddress = async () => {
+      if (!user) return;
+      try {
+        const res = await client.get('/auth/address');
+        if (res.data) {
+          const addr = res.data;
+          setFullName(addr.full_name || user?.full_name || '');
+          setPhone(addr.phone || user?.phone || '');
+          setAddressLine1(addr.address_line1 || '');
+          setAddressLine2(addr.address_line2 || '');
+          setCity(addr.city || '');
+          
+          if (addr.country === 'United Kingdom' && addr.region && addr.region.includes(' - ')) {
+            const parts = addr.region.split(' - ');
+            setUkCountry(parts[0]);
+            setRegion(parts[1]);
+          } else {
+            setRegion(addr.region || '');
+            setUkCountry('England');
+          }
+          
+          setCountry(addr.country || 'Ghana');
+        }
+      } catch (error) {
+        console.error('Failed to load saved address:', error);
+      }
+    };
+
+    fetchSavedAddress();
+  }, [user]);
+
   // Step state
   const [step, setStep] = useState<1 | 2>(1);
   const [loading, setLoading] = useState(false);
@@ -59,6 +130,7 @@ const CheckoutPage: React.FC = () => {
   const [city, setCity] = useState('');
   const [region, setRegion] = useState('');
   const [country, setCountry] = useState('Ghana');
+  const [ukCountry, setUkCountry] = useState('England');
   
   // Totals & fees states
   const [deliveryFee, setDeliveryFee] = useState<number | null>(null);
@@ -166,7 +238,7 @@ const CheckoutPage: React.FC = () => {
       address_line1: addressLine1,
       address_line2: addressLine2,
       city,
-      region,
+      region: country === 'United Kingdom' ? `${ukCountry} - ${region}` : region,
       country,
     };
 
@@ -295,13 +367,33 @@ const CheckoutPage: React.FC = () => {
                       required
                       className="border border-border bg-background p-2.5 text-xs outline-none focus:border-accent"
                     >
-                      {['Ghana', 'United States', 'United Kingdom', 'Canada', 'Nigeria', 'Germany', 'Other'].map((c) => (
+                      {['Ghana', 'Nigeria', 'United States', 'United Kingdom', 'Canada', 'Germany', 'South Africa', 'Other'].map((c) => (
                         <option key={c} value={c}>
                           {c}
                         </option>
                       ))}
                     </select>
                   </div>
+                  {country === 'United Kingdom' && (
+                    <div className="flex flex-col space-y-1.5">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">UK Country</label>
+                      <select
+                        value={ukCountry}
+                        onChange={(e) => {
+                          setUkCountry(e.target.value);
+                          setRegion(''); // reset region/county when UK country changes
+                        }}
+                        required
+                        className="border border-border bg-background p-2.5 text-xs outline-none focus:border-accent"
+                      >
+                        {UK_COUNTRIES.map((c) => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                   <div className="flex flex-col space-y-1.5">
                     <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">City</label>
                     <input
@@ -317,32 +409,72 @@ const CheckoutPage: React.FC = () => {
 
                 <div className="flex flex-col space-y-1.5">
                   <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    {country.toLowerCase() === 'ghana' ? 'Region (Ghana)' : 'State / Province / Region'}
+                    State / Province / Region
                   </label>
-                  {country.toLowerCase() === 'ghana' ? (
-                    <select
-                      value={region}
-                      onChange={(e) => setRegion(e.target.value)}
-                      required
-                      className="border border-border bg-background p-2.5 text-xs outline-none focus:border-accent"
-                    >
-                      <option value="">Select Region</option>
-                      {GHANA_REGIONS.map((r) => (
-                        <option key={r} value={r}>
-                          {r}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input
-                      type="text"
-                      value={region}
-                      onChange={(e) => setRegion(e.target.value)}
-                      required
-                      placeholder="E.g. New York, London, Ontario"
-                      className="border border-border bg-background p-2.5 text-xs outline-none focus:border-accent"
-                    />
-                  )}
+                  {(() => {
+                    let options: string[] = [];
+                    let placeholder = "Select Region / State";
+
+                    if (country === 'Ghana') {
+                      options = GHANA_REGIONS;
+                      placeholder = "Select Region";
+                    } else if (country === 'United States') {
+                      options = US_STATES;
+                      placeholder = "Select State";
+                    } else if (country === 'Nigeria') {
+                      options = NIGERIA_STATES;
+                      placeholder = "Select State";
+                    } else if (country === 'United Kingdom') {
+                      placeholder = "Select County";
+                      if (ukCountry === 'England') {
+                        options = UK_ENGLAND_COUNTIES;
+                      } else if (ukCountry === 'Scotland') {
+                        options = UK_SCOTLAND_COUNTIES;
+                      } else if (ukCountry === 'Wales') {
+                        options = UK_WALES_COUNTIES;
+                      } else if (ukCountry === 'Northern Ireland') {
+                        options = UK_NI_COUNTIES;
+                      }
+                    } else if (country === 'Canada') {
+                      options = CANADA_PROVINCES;
+                      placeholder = "Select Province";
+                    } else if (country === 'Germany') {
+                      options = GERMANY_STATES;
+                      placeholder = "Select State";
+                    } else if (country === 'South Africa') {
+                      options = SOUTH_AFRICA_PROVINCES;
+                      placeholder = "Select Province";
+                    }
+
+                    if (options.length > 0) {
+                      return (
+                        <select
+                          value={region}
+                          onChange={(e) => setRegion(e.target.value)}
+                          required
+                          className="border border-border bg-background p-2.5 text-xs outline-none focus:border-accent"
+                        >
+                          <option value="">{placeholder}</option>
+                          {options.map((opt) => (
+                            <option key={opt} value={opt}>
+                              {opt}
+                            </option>
+                          ))}
+                        </select>
+                      );
+                    }
+
+                    return (
+                      <input
+                        type="text"
+                        value={region}
+                        onChange={(e) => setRegion(e.target.value)}
+                        required
+                        placeholder="E.g. California, Lagos, Ontario"
+                        className="border border-border bg-background p-2.5 text-xs outline-none focus:border-accent"
+                      />
+                    );
+                  })()}
                 </div>
 
                 {/* Delivery fee status alerts */}

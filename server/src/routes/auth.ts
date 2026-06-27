@@ -205,6 +205,82 @@ router.put('/profile', authenticateToken, async (req: AuthenticatedRequest, res:
   }
 });
 
+// GET: Fetch default address for authenticated user
+router.get('/address', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
+
+    const result = await query(
+      `SELECT id, user_id, full_name, phone, address_line1, address_line2, city, region, country, is_default
+       FROM public.addresses
+       WHERE user_id = $1
+       ORDER BY is_default DESC, created_at DESC
+       LIMIT 1`,
+      [req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.json(null);
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Fetch address error:', error);
+    res.status(500).json({ error: 'Failed to retrieve address details' });
+  }
+});
+
+// PUT: Update or Create default address for authenticated user
+router.put('/address', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
+  const { full_name, phone, address_line1, address_line2, city, region, country } = req.body;
+  
+  if (!full_name || !phone || !address_line1 || !city || !region || !country) {
+    return res.status(400).json({ error: 'Missing required address fields' });
+  }
+
+  try {
+    if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
+
+    // Check if user already has an address
+    const checkAddress = await query(
+      'SELECT id FROM public.addresses WHERE user_id = $1 LIMIT 1',
+      [req.user.id]
+    );
+
+    let result;
+    if (checkAddress.rows.length > 0) {
+      // Update existing address
+      result = await query(
+        `UPDATE public.addresses
+         SET full_name = $1,
+             phone = $2,
+             address_line1 = $3,
+             address_line2 = $4,
+             city = $5,
+             region = $6,
+             country = $7,
+             is_default = true
+         WHERE user_id = $8
+         RETURNING *`,
+        [full_name, phone, address_line1, address_line2 || null, city, region, country, req.user.id]
+      );
+    } else {
+      // Insert new default address
+      result = await query(
+        `INSERT INTO public.addresses (user_id, full_name, phone, address_line1, address_line2, city, region, country, is_default)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, true)
+         RETURNING *`,
+        [req.user.id, full_name, phone, address_line1, address_line2 || null, city, region, country]
+      );
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Upsert address error:', error);
+    res.status(500).json({ error: 'Failed to save address details' });
+  }
+});
+
 // Admin: Get all customers
 router.get('/customers', authenticateToken, requireStaff, async (req: Request, res: Response) => {
   const search = req.query.search as string;

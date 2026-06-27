@@ -11,6 +11,7 @@ import authRouter from './routes/auth';
 import productsRouter from './routes/products';
 import ordersRouter from './routes/orders';
 import contentRouter from './routes/content';
+import chatRouter from './routes/chat';
 
 dotenv.config();
 
@@ -60,6 +61,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/content', contentRouter);
+app.use('/api/chat', chatRouter);
 
 // Health check
 app.get('/health', (req, res) => {

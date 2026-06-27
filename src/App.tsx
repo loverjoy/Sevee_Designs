@@ -12,6 +12,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import AdminLayout from './components/layouts/AdminLayout';
 import SalespersonLayout from './components/layouts/SalespersonLayout';
+import Chatbot from './components/Chatbot';
 
 // Public Pages
 import HomePage from './pages/HomePage';
@@ -101,6 +102,7 @@ const StorefrontLayout: React.FC = () => {
         </Routes>
       </main>
       <Footer />
+      <Chatbot />
     </div>
   );
 };

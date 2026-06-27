@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Cell } from 'recharts';
-import { DollarSign, ShoppingBag, TrendingUp, TrendingDown, Loader2, MapPin, Globe, Compass } from 'lucide-react';
+import { DollarSign, ShoppingBag, TrendingUp, Loader2, MapPin, Globe, Compass } from 'lucide-react';
 import client from '../../api/client';
 import { formatPrice } from '../../lib/utils';
 
@@ -215,7 +215,7 @@ const AdminReportsPage: React.FC = () => {
                 <YAxis tickLine={false} />
                 <Tooltip formatter={(value) => [`${value} units`, 'Sales Volume']} />
                 <Bar dataKey="units" name="Units Sold" fill="#1C1B1A">
-                  {productData.map((entry, index) => (
+                  {productData.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Bar>

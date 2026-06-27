@@ -988,4 +988,53 @@ router.put('/:id/status', authenticateToken, requireStaff, async (req: Authentic
   }
 });
 
+// GET: Public order tracking by order number (no auth required, hides sensitive personal data)
+router.get('/track/:orderNumber', async (req, res) => {
+  const { orderNumber } = req.params;
+
+  try {
+    const result = await query(
+      `SELECT o.id, o.order_number, o.status, o.created_at, o.delivery_fee, o.subtotal, o.total, o.currency, o.tracking_number,
+              p.full_name as customer_name
+       FROM public.orders o
+       LEFT JOIN public.profiles p ON o.user_id = p.id
+       WHERE o.order_number = $1 OR o.tracking_number = $1`,
+      [orderNumber]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    const order = result.rows[0];
+
+    // Fetch order items (public summary)
+    const itemsResult = await query(
+      `SELECT product_name, quantity, unit_price, total_price 
+       FROM public.order_items 
+       WHERE order_id = $1`,
+      [order.id]
+    );
+
+    res.json({
+      order: {
+        id: order.id,
+        order_number: order.order_number,
+        status: order.status,
+        created_at: order.created_at,
+        delivery_fee: order.delivery_fee,
+        subtotal: order.subtotal,
+        total: order.total,
+        currency: order.currency,
+        tracking_number: order.tracking_number,
+        customer_name: order.customer_name ? order.customer_name.split(' ')[0] : 'Valued Customer', // only first name for privacy
+      },
+      items: itemsResult.rows,
+    });
+  } catch (error) {
+    console.error('Public track order error:', error);
+    res.status(500).json({ error: 'Failed to retrieve order tracking info' });
+  }
+});
+
 export default router;

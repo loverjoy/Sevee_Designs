@@ -1,0 +1,14 @@
+name = "sevee-designs-frontend"
+compatibility_date = "2024-03-20"
+pages_build_output_dir = "dist"
+
+[env.production]
+name = "sevee-designs-frontend"
+
+[[headers]]
+for = "/*"
+[headers.values]
+X-Frame-Options = "DENY"
+X-Content-Type-Options = "nosniff"
+Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+X-XSS-Protection = "1; mode=block"

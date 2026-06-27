@@ -205,7 +205,40 @@ cron.schedule('0 8 * * 1', async () => {
   }
 });
 
+// Run Database Auto-Migrations
+const migrateDatabase = async () => {
+  console.log('[MIGRATION] Checking database tables...');
+  try {
+    // 1. Add item_code column to products if not exists
+    await query('ALTER TABLE public.products ADD COLUMN IF NOT EXISTS item_code text UNIQUE;');
+    
+    // 2. Backfill empty/null item_codes
+    const nullCodesRes = await query('SELECT id, name, slug FROM public.products WHERE item_code IS NULL');
+    if (nullCodesRes.rows.length > 0) {
+      console.log(`[MIGRATION] Backfilling item_code for ${nullCodesRes.rows.length} products...`);
+      for (const row of nullCodesRes.rows) {
+        let prefix = row.name ? row.name.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, '') : 'PRD';
+        if (!prefix || prefix.length < 2) prefix = 'PRD';
+        const num = Math.floor(1000 + Math.random() * 9000);
+        const code = `SV-${prefix}-${num}`;
+        try {
+          await query('UPDATE public.products SET item_code = $1 WHERE id = $2', [code, row.id]);
+        } catch (e) {
+          // If collision occurs, generate with a different random number
+          const fallbackNum = Math.floor(1000 + Math.random() * 9000);
+          await query('UPDATE public.products SET item_code = $1 WHERE id = $2', [`SV-${prefix}-${fallbackNum}`, row.id]);
+        }
+      }
+      console.log('[MIGRATION] Backfill complete.');
+    }
+  } catch (error) {
+    console.error('[MIGRATION] Error migrating database:', error);
+  }
+};
+
 // Start Server
-app.listen(PORT, () => {
-  console.log(`[SERVER] SeVee Designs Backend running on http://localhost:${PORT}`);
+migrateDatabase().then(() => {
+  app.listen(PORT, () => {
+    console.log(`[SERVER] SeVee Designs Backend running on http://localhost:${PORT}`);
+  });
 });

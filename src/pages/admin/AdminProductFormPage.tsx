@@ -28,6 +28,7 @@ const AdminProductFormPage: React.FC = () => {
   const [isFeatured, setIsFeatured] = useState(false);
   const [isActive, setIsActive] = useState(true);
   const [modelUrl, setModelUrl] = useState('');
+  const [itemCode, setItemCode] = useState('');
   
   // Image & File States
   const [images, setImages] = useState<string[]>([]);
@@ -60,6 +61,7 @@ const AdminProductFormPage: React.FC = () => {
           setIsFeatured(p.is_featured);
           setIsActive(p.is_active);
           setModelUrl(p.model_url || '');
+          setItemCode(p.item_code || '');
           setImages(p.images || []);
           
           if (p.specifications && Object.keys(p.specifications).length > 0) {
@@ -172,6 +174,7 @@ const AdminProductFormPage: React.FC = () => {
     const payload = {
       category_id: categoryId || null,
       name,
+      item_code: itemCode || null,
       description,
       price: parseFloat(price),
       sale_price: salePrice ? parseFloat(salePrice) : null,
@@ -232,9 +235,9 @@ const AdminProductFormPage: React.FC = () => {
           <div className="space-y-4">
             <h3 className="font-serif text-base font-bold border-b border-border pb-2 text-accent">Basic Information</h3>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="flex flex-col space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Product Name</label>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Product Name *</label>
                 <input
                   type="text"
                   value={name}
@@ -258,6 +261,16 @@ const AdminProductFormPage: React.FC = () => {
                     </option>
                   ))}
                 </select>
+              </div>
+              <div className="flex flex-col space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Item Code / SKU (Optional)</label>
+                <input
+                  type="text"
+                  value={itemCode}
+                  onChange={(e) => setItemCode(e.target.value)}
+                  placeholder="E.g. SV-OAK-1001"
+                  className="border border-border bg-background p-2.5 text-xs outline-none focus:border-accent"
+                />
               </div>
             </div>
 

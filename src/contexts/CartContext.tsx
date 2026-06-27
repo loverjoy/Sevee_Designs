@@ -17,6 +17,7 @@ export interface Product {
   is_featured: boolean;
   is_active: boolean;
   model_url: string | null;
+  item_code?: string | null;
   created_at: string;
   updated_at: string;
 }

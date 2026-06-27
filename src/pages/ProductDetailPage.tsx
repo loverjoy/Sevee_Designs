@@ -156,8 +156,14 @@ const ProductDetailPage: React.FC = () => {
         {/* Right Column: Product Info & Configuration */}
         <div className="space-y-6">
           <div className="space-y-2">
-            <span className="text-xs font-sans tracking-widest text-muted-foreground uppercase">
-              {product.category_name || 'Furniture'}
+            <span className="text-xs font-sans tracking-widest text-muted-foreground uppercase flex items-center flex-wrap gap-2">
+              <span>{product.category_name || 'Furniture'}</span>
+              {product.item_code && (
+                <>
+                  <span className="text-border">|</span>
+                  <span className="font-bold tracking-wider text-accent">Item Code: {product.item_code}</span>
+                </>
+              )}
             </span>
             <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground">{product.name}</h1>
           </div>

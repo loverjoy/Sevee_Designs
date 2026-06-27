@@ -205,24 +205,34 @@ router.get('/id/:id', async (req: Request, res: Response) => {
 
 // POST: Create product (Admin only)
 router.post('/', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
-  const { category_id, name, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url } = req.body;
+  const { category_id, name, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url, item_code } = req.body;
 
   if (!name || !price || stock_quantity === undefined) {
     return res.status(400).json({ error: 'Name, price, and stock quantity are required' });
   }
 
   const slug = generateSlug(name);
+  let finalItemCode = item_code;
+  if (!finalItemCode) {
+    let prefix = name ? name.substring(0, 3).toUpperCase().replace(/[^A-Z]/g, '') : 'PRD';
+    if (!prefix || prefix.length < 2) prefix = 'PRD';
+    const num = Math.floor(1000 + Math.random() * 9000);
+    finalItemCode = `SV-${prefix}-${num}`;
+  } else {
+    finalItemCode = finalItemCode.trim().toUpperCase();
+  }
 
   try {
     const result = await query(
       `INSERT INTO public.products 
-       (category_id, name, slug, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+       (category_id, name, slug, item_code, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
        RETURNING *`,
       [
         category_id || null,
         name,
         slug,
+        finalItemCode,
         description || null,
         price,
         sale_price || null,
@@ -239,6 +249,9 @@ router.post('/', authenticateToken, requireAdmin, async (req: Request, res: Resp
   } catch (error: any) {
     console.error('Create product error:', error);
     if (error.code === '23505') {
+      if (error.constraint === 'products_item_code_key') {
+        return res.status(409).json({ error: 'A product with this item code already exists' });
+      }
       return res.status(409).json({ error: 'A product with this name already exists' });
     }
     res.status(500).json({ error: 'Failed to create product' });
@@ -311,45 +324,76 @@ router.delete('/wishlist/:productId', authenticateToken, async (req: any, res: R
 // PUT: Update product (Admin only)
 router.put('/:id', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { category_id, name, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url } = req.body;
+  const { category_id, name, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url, item_code } = req.body;
 
   try {
-    // Generate new slug if name is updated
-    let slugUpdate = '';
-    const params: any[] = [id];
+    const fieldsToUpdate: string[] = [];
+    const params: any[] = [id]; // $1
 
-    if (name) {
+    if (category_id !== undefined) {
+      params.push(category_id || null);
+      fieldsToUpdate.push(`category_id = $${params.length}`);
+    }
+    if (name !== undefined) {
+      params.push(name || null);
+      fieldsToUpdate.push(`name = $${params.length}`);
+      
       const slug = generateSlug(name);
       params.push(slug);
-      slugUpdate = `, slug = $${params.length}`;
+      fieldsToUpdate.push(`slug = $${params.length}`);
+    }
+    if (item_code !== undefined) {
+      params.push(item_code ? item_code.trim().toUpperCase() : null);
+      fieldsToUpdate.push(`item_code = $${params.length}`);
+    }
+    if (description !== undefined) {
+      params.push(description || null);
+      fieldsToUpdate.push(`description = $${params.length}`);
+    }
+    if (price !== undefined) {
+      params.push(price);
+      fieldsToUpdate.push(`price = $${params.length}`);
+    }
+    if (sale_price !== undefined) {
+      params.push(sale_price);
+      fieldsToUpdate.push(`sale_price = $${params.length}`);
+    }
+    if (stock_quantity !== undefined) {
+      params.push(stock_quantity);
+      fieldsToUpdate.push(`stock_quantity = $${params.length}`);
+    }
+    if (images !== undefined) {
+      params.push(images || null);
+      fieldsToUpdate.push(`images = $${params.length}`);
+    }
+    if (specifications !== undefined) {
+      params.push(specifications || null);
+      fieldsToUpdate.push(`specifications = $${params.length}`);
+    }
+    if (is_featured !== undefined) {
+      params.push(is_featured);
+      fieldsToUpdate.push(`is_featured = $${params.length}`);
+    }
+    if (is_active !== undefined) {
+      params.push(is_active);
+      fieldsToUpdate.push(`is_active = $${params.length}`);
+    }
+    if (model_url !== undefined) {
+      params.push(model_url || null);
+      fieldsToUpdate.push(`model_url = $${params.length}`);
     }
 
-    params.push(category_id || null);
-    params.push(name || null);
-    params.push(description || null);
-    params.push(price || null);
-    params.push(sale_price !== undefined ? sale_price : null);
-    params.push(stock_quantity !== undefined ? stock_quantity : null);
-    params.push(images || null);
-    params.push(specifications || null);
-    params.push(is_featured !== undefined ? is_featured : null);
-    params.push(is_active !== undefined ? is_active : null);
-    params.push(model_url !== undefined ? model_url : null);
+    if (fieldsToUpdate.length === 0) {
+      const currentRes = await query('SELECT * FROM public.products WHERE id = $1', [id]);
+      if (currentRes.rows.length === 0) {
+        return res.status(404).json({ error: 'Product not found' });
+      }
+      return res.json(currentRes.rows[0]);
+    }
 
     const sql = `
       UPDATE public.products
-      SET category_id = COALESCE($3, category_id),
-          name = COALESCE($4, name)
-          ${slugUpdate},
-          description = COALESCE($5, description),
-          price = COALESCE($6, price),
-          sale_price = CASE WHEN $7 IS NULL THEN sale_price ELSE $7 END,
-          stock_quantity = COALESCE($8, stock_quantity),
-          images = COALESCE($9, images),
-          specifications = COALESCE($10, specifications),
-          is_featured = COALESCE($11, is_featured),
-          is_active = COALESCE($12, is_active),
-          model_url = CASE WHEN $13 IS NULL THEN model_url ELSE $13 END
+      SET ${fieldsToUpdate.join(', ')}, updated_at = now()
       WHERE id = $1
       RETURNING *
     `;
@@ -361,8 +405,14 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: Request, res: Re
     }
 
     res.json(result.rows[0]);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Update product error:', error);
+    if (error.code === '23505') {
+      if (error.constraint === 'products_item_code_key') {
+        return res.status(409).json({ error: 'A product with this item code already exists' });
+      }
+      return res.status(409).json({ error: 'A product with this name already exists' });
+    }
     res.status(500).json({ error: 'Failed to update product' });
   }
 });

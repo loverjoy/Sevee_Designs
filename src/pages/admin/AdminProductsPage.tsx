@@ -78,6 +78,7 @@ const AdminProductsPage: React.FC = () => {
   // Filter products locally by search query
   const filteredProducts = products.filter((p) =>
     p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (p.item_code && p.item_code.toLowerCase().includes(searchQuery.toLowerCase())) ||
     (p.category_name && p.category_name.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
@@ -157,7 +158,14 @@ const AdminProductsPage: React.FC = () => {
                           alt={p.name}
                           className="w-10 h-10 object-cover bg-secondary border border-border shrink-0"
                         />
-                        <span className="truncate">{p.name}</span>
+                        <div className="flex flex-col min-w-0">
+                          <span className="truncate">{p.name}</span>
+                          {p.item_code && (
+                            <span className="text-[10px] text-muted-foreground font-bold tracking-wider uppercase mt-0.5">
+                              Code: {p.item_code}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </td>
                     

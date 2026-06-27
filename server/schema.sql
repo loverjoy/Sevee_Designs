@@ -76,6 +76,7 @@ CREATE TABLE public.products (
   category_id     uuid REFERENCES public.categories(id) ON DELETE SET NULL,
   name            text NOT NULL,
   slug            text UNIQUE NOT NULL,
+  item_code       text UNIQUE,
   description     text,
   price           numeric(10,2) NOT NULL,
   sale_price      numeric(10,2),                     -- null = no sale

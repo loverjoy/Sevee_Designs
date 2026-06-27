@@ -42,13 +42,14 @@ VALUES
   ON CONFLICT (id) DO NOTHING;
 
 -- 3. Insert Products
-INSERT INTO public.products (id, category_id, name, slug, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
+INSERT INTO public.products (id, category_id, name, slug, item_code, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
 VALUES
   (
     'f1000000-0000-0000-0000-000000000001', 
     'c1000000-0000-0000-0000-000000000001', 
     'Deluxe Oak Dining Table', 
     'deluxe-oak-dining-table', 
+    'SV-OAK-1001',
     'A solid oak wood dining table crafted with precision. Seats up to 8 people comfortably. Features a matte oil finish to protect and highlight the natural wood grain.', 
     3500.00, 
     3200.00, 
@@ -61,13 +62,14 @@ VALUES
   )
   ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO public.products (id, category_id, name, slug, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
+INSERT INTO public.products (id, category_id, name, slug, item_code, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
 VALUES
   (
     'f1000000-0000-0000-0000-000000000002', 
     'c1000000-0000-0000-0000-000000000001', 
     'Velvet Lounge Chair', 
     'velvet-lounge-chair', 
+    'SV-VEL-1002',
     'An accent chair upholstered in premium velvet fabric with elegant brass legs. Perfect for reading corners or adding a sophisticated touch to your living room.', 
     1800.00, 
     null, 
@@ -80,13 +82,14 @@ VALUES
   )
   ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO public.products (id, category_id, name, slug, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
+INSERT INTO public.products (id, category_id, name, slug, item_code, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
 VALUES
   (
     'f1000000-0000-0000-0000-000000000003', 
     'c1000000-0000-0000-0000-000000000003', 
     'Ergonomic Task Chair', 
     'ergonomic-task-chair', 
+    'SV-ERG-1003',
     'High-back executive office chair with adjustable lumbar support, 3D armrests, and dynamic mesh backing to ensure posture support during long working hours.', 
     1200.00, 
     999.00, 
@@ -99,13 +102,14 @@ VALUES
   )
   ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO public.products (id, category_id, name, slug, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
+INSERT INTO public.products (id, category_id, name, slug, item_code, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
 VALUES
   (
     'f1000000-0000-0000-0000-000000000004', 
     'c1000000-0000-0000-0000-000000000004', 
     'Teak Sun Lounger', 
     'teak-sun-lounger', 
+    'SV-TEK-1004',
     'Premium grade A teak wood lounge chair designed for outdoor relaxation. Naturally weather-resistant, features 4 reclining positions and built-in wheels.', 
     2500.00, 
     null, 
@@ -118,13 +122,14 @@ VALUES
   )
   ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO public.products (id, category_id, name, slug, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
+INSERT INTO public.products (id, category_id, name, slug, item_code, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
 VALUES
   (
     'f1000000-0000-0000-0000-000000000005', 
     'c1000000-0000-0000-0000-000000000005', 
     'Minimalist Wall Clock', 
     'minimalist-wall-clock', 
+    'SV-CLK-1005',
     'Modern silently sweep-second clock with a black steel frame and natural wood hands. A timeless decor accent piece for any room.', 
     450.00, 
     380.00, 
@@ -137,13 +142,14 @@ VALUES
   )
   ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO public.products (id, category_id, name, slug, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
+INSERT INTO public.products (id, category_id, name, slug, item_code, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
 VALUES
   (
     'f1000000-0000-0000-0000-000000000006', 
     'c1000000-0000-0000-0000-000000000002', 
     'Queen Platform Bed Frame', 
     'queen-platform-bed-frame', 
+    'SV-BED-1006',
     'Low-profile queen size platform bed frame made of solid mahogany wood. Strong slats eliminate the need for a box spring.', 
     4200.00, 
     null, 
@@ -156,13 +162,14 @@ VALUES
   )
   ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO public.products (id, category_id, name, slug, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
+INSERT INTO public.products (id, category_id, name, slug, item_code, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
 VALUES
   (
     'f1000000-0000-0000-0000-000000000007', 
     'c1000000-0000-0000-0000-000000000001', 
     'Mid-Century Credenza', 
     'mid-century-credenza', 
+    'SV-CRD-1007',
     'Walnut wood side cabinet featuring 3 drawers and 2 sliding doors. Spacious interior shelving for media devices or dinnerware.', 
     2900.00, 
     2650.00, 
@@ -175,13 +182,14 @@ VALUES
   )
   ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO public.products (id, category_id, name, slug, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
+INSERT INTO public.products (id, category_id, name, slug, item_code, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
 VALUES
   (
     'f1000000-0000-0000-0000-000000000008', 
     'c1000000-0000-0000-0000-000000000001', 
     'Industrial Floor Lamp', 
     'industrial-floor-lamp', 
+    'SV-LMP-1008',
     'Adjustable arc light fixture with a heavy concrete base and powder-coated matte black steel shade. Ideal for lighting reading armchairs.', 
     850.00, 
     null, 

@@ -24,10 +24,10 @@ interface ChatMessage {
 const searchProductsInDb = async (searchTerm: string) => {
   try {
     const res = await query(
-      `SELECT p.id, p.name, p.slug, p.price, p.sale_price, p.images, c.name as category_name
+      `SELECT p.id, p.name, p.slug, p.price, p.sale_price, p.images, p.item_code, c.name as category_name
        FROM public.products p
        LEFT JOIN public.categories c ON p.category_id = c.id
-       WHERE p.is_active = true AND (p.name ILIKE $1 OR p.description ILIKE $1 OR c.name ILIKE $1)
+       WHERE p.is_active = true AND (p.name ILIKE $1 OR p.description ILIKE $1 OR p.item_code ILIKE $1 OR c.name ILIKE $1)
        LIMIT 4`,
       [`%${searchTerm}%`]
     );
@@ -83,6 +83,31 @@ router.post('/', async (req: Request, res: Response) => {
   let dbContext = '';
   let foundOrder: any = null;
   let foundProducts: any[] = [];
+
+  // Check for item code in message (e.g. SV-OAK-1001)
+  const itemCodeRegex = /\b(SV-[A-Z0-9]+-\d+)\b/i;
+  const itemCodeMatch = message.match(itemCodeRegex);
+  if (itemCodeMatch) {
+    const matchedCode = itemCodeMatch[1].toUpperCase();
+    try {
+      const productByCode = await query(
+        `SELECT p.id, p.name, p.slug, p.price, p.sale_price, p.stock_quantity, p.item_code, c.name as category_name
+         FROM public.products p
+         LEFT JOIN public.categories c ON p.category_id = c.id
+         WHERE p.item_code = $1 AND p.is_active = true`,
+        [matchedCode]
+      );
+      if (productByCode.rows.length > 0) {
+        const prod = productByCode.rows[0];
+        dbContext += `\n[DATABASE CONTEXT: Genuine item verified! Item code "${matchedCode}" corresponds to "${prod.name}" in category "${prod.category_name}". Current price is GHS ${prod.sale_price || prod.price}. Stock: ${prod.stock_quantity} units available. Confirm to the user that this is a genuine SeVee Designs product.]`;
+        foundProducts.push(prod);
+      } else {
+        dbContext += `\n[DATABASE CONTEXT: The user queried item code "${matchedCode}", but no active product with this code was found in the database. Tell them this code could not be verified in our registry.]`;
+      }
+    } catch (err) {
+      console.error('Chat db item code search error:', err);
+    }
+  }
 
   // Check for order number in message
   const orderMatch = message.match(orderNumRegex);

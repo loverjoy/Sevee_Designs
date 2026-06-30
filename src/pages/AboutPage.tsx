@@ -129,37 +129,31 @@ const AboutPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
           {[
             {
-              name: 'Seth Amankwaa Kwarteng',
+              name: 'Ama Serwaa Mensah',
               role: 'Founder & CEO',
-              bio: 'Seth drives SeVee’s global vision, establishing international delivery channels and steering our ecological wood restoration program.',
-              image: '/images/SETH AMANKWAA KWARTENG.JPG.jpeg'
+              bio: 'Ama drives SeVee’s global vision, establishing international delivery channels and steering our ecological wood restoration program.',
+              image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400'
             },
             {
-              name: 'Kofi Darko Kwarteng',
-              role: 'Lead Architect',
-              bio: 'Kofi merges physical ergonomics with digital space, designing our catalog and leading architectural modeling for modern spaces.',
-              image: '/images/KOFI DARKO KWARTENG - LEAD ARCHITECT.jpg.jpeg'
+              name: 'Kofi SeVee Mensah',
+              role: 'Director of Craftsmanship & Master Carpenter',
+              bio: 'A third-generation wood artisan, Kofi oversees timber selection, dry vacuum kiln operations, and interlocking structural joinery.',
+              image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=400'
             },
             {
-              name: 'Samuel Antwi Adjei',
-              role: 'Operations Manager',
-              bio: 'Samuel oversees day-to-day workshop operations, ensuring our 1-for-1 replanting program funds reach community reserves.',
-              image: '/images/SAMUEL ANTWI ADJEI - OPERATIONS MANAGER1.jpg.jpeg'
+              name: 'Samuel Boateng',
+              role: 'Chief Accountant & Operations Manager',
+              bio: 'Samuel manages financial integrity, ensuring our 1-for-1 replanting program funds reach community reserves in the Ashanti region.',
+              image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400'
             },
             {
-              name: 'Victoria Owusu Ansah',
-              role: 'Accountant',
-              bio: 'Victoria manages financial integrity and resource allocation, enabling sustainable growth and ethical sourcing of our timber.',
-              image: '/images/VICTORIA OWUSU ANSAH -ACCOUNTANT .JPG.jpeg'
-            },
-            {
-              name: 'Rachael Osei',
-              role: 'Secretary',
-              bio: 'Rachael coordinates client communications, workshop schedules, and administrative operations at the East Legon Workshop.',
-              image: '/images/RACHAEL OSEI - SECRETARY .JPG.jpeg'
+              name: 'David Tetteh',
+              role: 'Lead Architect & 3D Product Designer',
+              bio: 'David merges physical ergonomics with digital space, designing our catalog and leading WebXR AR visualizations for mobile platforms.',
+              image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400'
             }
           ].map((member, idx) => (
             <div key={idx} className="border border-border bg-card shadow-card flex flex-col h-full overflow-hidden group hover:border-accent transition-colors duration-300">
@@ -170,16 +164,16 @@ const AboutPage: React.FC = () => {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
-              <div className="p-5 flex-grow flex flex-col justify-between space-y-4">
-                <div className="space-y-1">
+              <div className="p-5 flex-grow flex flex-col justify-start space-y-2">
+                <div className="space-y-0.5">
                   <span className="text-[10px] font-sans tracking-widest text-muted-foreground uppercase font-bold">
                     {member.role}
                   </span>
-                  <h4 className="font-serif text-base font-bold text-foreground group-hover:text-accent transition-colors">
+                  <h4 className="font-serif text-sm md:text-base font-bold text-foreground group-hover:text-accent transition-colors whitespace-nowrap overflow-hidden text-ellipsis">
                     {member.name}
                   </h4>
                 </div>
-                <p className="text-[11px] text-muted-foreground leading-relaxed font-sans">
+                <p className="text-[11px] text-muted-foreground leading-relaxed font-sans mt-2">
                   {member.bio}
                 </p>
               </div>

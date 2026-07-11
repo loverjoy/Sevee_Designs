@@ -57,7 +57,7 @@ const HomePage: React.FC = () => {
           <span className="text-accent text-xs font-sans font-bold tracking-[0.3em] uppercase block fade-up">
             Architectural Luxury
           </span>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-serif leading-tight max-w-3xl fade-up">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-serif leading-tight max-w-3xl fade-up" style={{ color: 'hsl(36, 20%, 93%)' }}>
             Crafting spaces that inspire
           </h1>
           <p className="font-sans text-sm md:text-base text-muted-foreground/80 max-w-xl leading-relaxed fade-up">

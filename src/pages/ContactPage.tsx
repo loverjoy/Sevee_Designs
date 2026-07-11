@@ -6,9 +6,9 @@ import useSEO from '../hooks/useSEO';
 
 const ContactPage: React.FC = () => {
   useSEO({
-    title: 'Contact Our Accra Workshop',
+    title: 'Contact Our Kumasi Workshop',
     description: 'Get in touch with SeVee Designs for inquiries, quotes, custom orders, or showroom visits.',
-    keywords: 'contact carpentry Accra, custom wood order Ghana, buy handcrafted tables, SeVee address'
+    keywords: 'contact carpentry Kumasi, custom wood order Ghana, buy handcrafted tables, SeVee address'
   });
 
   const [name, setName] = useState('');
@@ -44,15 +44,15 @@ const ContactPage: React.FC = () => {
     }
   };
 
-  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyB_LJOYJL-84SMuxNB7LtRGhxEQLjswvy0&q=23+Furniture+Lane,+East+Legon,+Accra,+Ghana`;
+  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyB_LJOYJL-84SMuxNB7LtRGhxEQLjswvy0&q=Bebere+Oduom,+Kumasi,+Ashanti,+Ghana`;
 
   return (
     <div className="pt-32 max-w-7xl mx-auto px-6 space-y-16 min-h-screen font-sans">
       {/* Header */}
       <div className="text-center space-y-2 max-w-xl mx-auto">
-        <h1 className="text-4xl font-serif font-bold">Contact Our Studio</h1>
+        <h1 className="text-4xl font-serif font-bold">Contact Our Workshop</h1>
         <p className="text-xs text-muted-foreground">
-          Reach out for custom size configurations, wholesale requests, or visit our East Legon showroom.
+          Reach out for custom size configurations, wholesale requests, or visit our Kumasi showroom.
         </p>
       </div>
 
@@ -143,14 +143,16 @@ const ContactPage: React.FC = () => {
         {/* Right Column: Contact Details & Embedded Google Maps */}
         <div className="space-y-6">
           <div className="border border-border bg-card p-6 shadow-card space-y-4">
-            <h3 className="font-serif text-lg font-bold border-b border-border pb-3">Showroom & Workshop</h3>
+            <h3 className="font-serif text-lg font-bold border-b border-border pb-3">Head Office & Workshop</h3>
             
             <ul className="space-y-4 text-xs text-muted-foreground leading-relaxed">
               <li className="flex items-start space-x-3">
                 <MapPin size={18} className="text-accent mt-0.5 shrink-0" />
                 <div>
-                  <p className="font-bold text-foreground">Accra HQ Studio</p>
-                  <p>23 Furniture Lane, East Legon, Accra, Ghana</p>
+                  <p className="font-bold text-foreground">Principal Place of Business</p>
+                  <p>Plot 7, Block 1st Close, Bebere Oduom (Near Victory in Christ Ministry), Kumasi, Ashanti, Ghana.</p>
+                  <p className="text-[10px] mt-1">Digital Address: AK-818-5383</p>
+                  <p className="text-[10px]">Postal Address: P.O. Box SE 1483, Suame - Kumasi, Ghana.</p>
                   <p className="text-[10px] text-muted-foreground">Open Mon - Sat (9:00 AM - 6:00 PM)</p>
                 </div>
               </li>
@@ -158,7 +160,7 @@ const ContactPage: React.FC = () => {
                 <Phone size={18} className="text-accent mt-0.5 shrink-0" />
                 <div>
                   <p className="font-bold text-foreground">Phone Support</p>
-                  <p>+233 24 412 3456</p>
+                  <p>0597 739 059</p>
                 </div>
               </li>
               <li className="flex items-start space-x-3">

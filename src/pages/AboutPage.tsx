@@ -7,7 +7,7 @@ const AboutPage: React.FC = () => {
   useSEO({
     title: 'Our Legacy & Wood Craftsmanship',
     description: "Learn about SeVee Designs' decade-long journey of merging modern geometric precision with traditional Ghanaian woodcraft.",
-    keywords: 'Ghanaian woodcraft, sustainable forestry, custom carpentry Accra, African furniture design'
+    keywords: 'Ghanaian woodcraft, sustainable forestry, custom carpentry Kumasi, African furniture design'
   });
 
   return (
@@ -23,7 +23,7 @@ const AboutPage: React.FC = () => {
             Furniture built for generations
           </h1>
           <p className="text-xs md:text-sm text-muted-foreground leading-relaxed max-w-xl">
-            Established in Accra, Ghana, SeVee Designs has spent a decade crafting premium solid wood furniture. We merge architectural, geometric precision with traditional African joinery to create timeless accents for modern spaces.
+            Established in Kumasi, Ghana, SeVee Designs has spent a decade crafting premium solid wood furniture. We merge architectural, geometric precision with traditional African joinery to create timeless accents for modern spaces.
           </p>
           <div className="pt-2">
             <Link to="/shop" className="bg-primary hover:bg-accent text-primary-foreground py-3.5 px-8 text-xs font-bold uppercase tracking-wider transition-colors inline-block">
@@ -102,9 +102,9 @@ const AboutPage: React.FC = () => {
           />
         </div>
         <div className="space-y-6">
-          <h2 className="text-3xl font-serif font-bold">The East Legon Workshop</h2>
+          <h2 className="text-3xl font-serif font-bold">The Bebere Oduom Workshop</h2>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Our main studio is located on Furniture Lane in East Legon, Accra. Here, you can watch our master carpenters at work. Combining state-of-the-art timber sawing machines with micro-precise hand planes and chisels, we process teak logs directly from sustainable concessions into structural components.
+            Our main workshop is located at Plot 7, Block 1st Close, Bebere Oduom, Kumasi. Here, you can watch our master carpenters at work. Combining state-of-the-art timber sawing machines with micro-precise hand planes and chisels, we process teak logs directly from sustainable concessions into structural components.
           </p>
           <p className="text-xs text-muted-foreground leading-relaxed">
             We are proud to employ 15 local Ghanaian carpenters and designers, keeping traditional craftsmanship alive while pushing the boundaries of modern, minimalist design. When you buy from SeVee, you support Ghanaian forestry, carpentry, and families.
@@ -158,7 +158,7 @@ const AboutPage: React.FC = () => {
             {
               name: 'Rachael Osei',
               role: 'Secretary',
-              bio: 'Rachael coordinates client communications, workshop schedules, and administrative operations at the East Legon Workshop.',
+              bio: 'Rachael coordinates client communications, workshop schedules, and administrative operations at the Bebere Oduom Workshop.',
               image: '/images/RACHAEL OSEI - SECRETARY .JPG.jpeg'
             }
           ].map((member, idx) => (

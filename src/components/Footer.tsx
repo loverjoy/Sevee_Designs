@@ -22,7 +22,7 @@ const Footer: React.FC = () => {
             </div>
           </Link>
           <p className="font-sans text-xs text-muted-foreground leading-relaxed">
-            Crafting spaces that inspire. We design and manufacture architectural, high-grade hardwood furniture in Accra, Ghana.
+            Crafting spaces that inspire. We design and manufacture architectural, high-grade hardwood furniture in Kumasi, Ghana.
           </p>
           <div className="flex space-x-4 pt-2 text-muted-foreground">
             <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-accent transition-colors">
@@ -90,11 +90,11 @@ const Footer: React.FC = () => {
           <ul className="space-y-3 text-xs text-muted-foreground">
             <li className="flex items-start space-x-2">
               <MapPin size={14} className="mt-0.5 text-accent shrink-0" />
-              <span>23 Furniture Lane, East Legon, Accra, Ghana</span>
+              <span>Plot 7, Block 1st Close, Bebere Oduom, Kumasi, Ashanti, Ghana</span>
             </li>
             <li className="flex items-center space-x-2">
               <Phone size={14} className="text-accent shrink-0" />
-              <span>+233 24 412 3456</span>
+              <span>0597 739 059</span>
             </li>
             <li className="flex items-center space-x-2">
               <Mail size={14} className="text-accent shrink-0" />
@@ -108,7 +108,7 @@ const Footer: React.FC = () => {
       <div className="border-t border-border/10 py-6 text-center font-sans text-[11px] text-muted-foreground">
         <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-4">
           <span>&copy; {new Date().getFullYear()} SEVEE DESIGNS. All rights reserved.</span>
-          <span>Crafted in Accra, Ghana.</span>
+          <span>Crafted in Kumasi, Ghana.</span>
         </div>
       </div>
     </footer>

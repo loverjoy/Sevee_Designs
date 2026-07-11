@@ -19,10 +19,16 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Enable CORS
+// CLIENT_URL can be comma-separated for multiple origins (e.g. "https://seveedesigns.com,https://sevee-designs.vercel.app")
 const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
 const clientUrl = process.env.CLIENT_URL;
 if (clientUrl) {
-  allowedOrigins.push(clientUrl.replace(/\/$/, ''));
+  clientUrl.split(',').forEach((url: string) => {
+    const trimmed = url.trim().replace(/\/$/, '');
+    if (trimmed && !allowedOrigins.includes(trimmed)) {
+      allowedOrigins.push(trimmed);
+    }
+  });
 }
 
 app.use(cors({

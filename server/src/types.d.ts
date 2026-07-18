@@ -8,35 +8,38 @@ declare module 'pg' {
 }
 
 declare module 'express' {
-  const express: any;
+  function express(): any;
+  namespace express {
+    function Router(): any;
+    function json(options?: any): any;
+    function urlencoded(options?: any): any;
+    function static(root: string, options?: any): any;
+    interface Request {
+      [key: string]: any;
+      headers: Record<string, string>;
+      body: any;
+      query: Record<string, string>;
+      params: Record<string, string>;
+      protocol: string;
+      ip: string;
+      file?: any;
+      socket: any;
+      rawBody?: any;
+      get(name: string): string | undefined;
+      header(name: string): string | undefined;
+    }
+    interface Response {
+      [key: string]: any;
+      status(code: number): Response;
+      json(body: any): Response;
+      send(body: any): Response;
+      redirect(url: string): Response;
+      setHeader(name: string, value: string | string[]): Response;
+    }
+    type NextFunction = (err?: any) => void;
+  }
   export default express;
-  export function Router(): any;
-  export function json(options?: any): any;
-  export function urlencoded(options?: any): any;
-  export function static(root: string, options?: any): any;
-  export interface Request {
-    [key: string]: any;
-    headers: Record<string, string>;
-    body: any;
-    query: Record<string, string>;
-    params: Record<string, string>;
-    protocol: string;
-    ip: string;
-    file?: any;
-    socket: any;
-    rawBody?: any;
-    get(name: string): string | undefined;
-    header(name: string): string | undefined;
-  }
-  export interface Response {
-    [key: string]: any;
-    status(code: number): Response;
-    json(body: any): Response;
-    send(body: any): Response;
-    redirect(url: string): Response;
-    setHeader(name: string, value: string | string[]): Response;
-  }
-  export type NextFunction = (err?: any) => void;
+  export = express;
 }
 
 declare module 'cors' {

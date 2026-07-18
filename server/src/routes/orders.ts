@@ -525,7 +525,7 @@ router.post('/checkout', authenticateToken, async (req: AuthenticatedRequest, re
 
     // 2. Calculate subtotal & validate stock
     let subtotal = 0;
-    const itemsToInsert = [];
+    const itemsToInsert: any[] = [];
 
     for (const cartItem of items) {
       const { product_id, quantity } = cartItem;

@@ -182,7 +182,7 @@ Key brand details to use:
 - Response guidelines: Keep responses concise, elegant, and professional (1-3 sentences per turn). Use database context injections if provided to answer order queries or product recommendations directly. If no database context is provided but you need to reference orders or products, explain that you can query them if they provide the order number or search terms.`;
 
       // Build contents array for Gemini API (User & Model history, ending with new prompt + context)
-      const contents = [];
+      const contents: any[] = [];
       
       // Add history
       for (const h of history) {

@@ -222,6 +222,9 @@ const migrateDatabase = async () => {
     // 1. Add item_code column to products if not exists
     await query('ALTER TABLE public.products ADD COLUMN IF NOT EXISTS item_code text UNIQUE;');
     
+    // 2. Make password_hash nullable for social login (Google OAuth)
+    await query('ALTER TABLE public.profiles ALTER COLUMN password_hash DROP NOT NULL;');
+    
     // 2. Backfill empty/null item_codes
     const nullCodesRes = await query('SELECT id, name, slug FROM public.products WHERE item_code IS NULL');
     if (nullCodesRes.rows.length > 0) {

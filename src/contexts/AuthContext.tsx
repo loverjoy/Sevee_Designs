@@ -24,6 +24,7 @@ interface AuthContextType {
     phone?: string;
     password: string;
   }) => Promise<User>;
+  googleLogin: (idToken: string) => Promise<User>;
   logout: () => void;
   updateProfile: (payload: { full_name?: string; phone?: string; avatar_url?: string }) => Promise<User>;
 }
@@ -114,6 +115,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
   };
 
+  const googleLogin = async (idToken: string): Promise<User> => {
+    setLoading(true);
+    try {
+      const res = await client.post('/auth/google', { idToken });
+      const { token: receivedToken, user: receivedUser } = res.data;
+
+      localStorage.setItem('sevee_token', receivedToken);
+      setToken(receivedToken);
+      setUser(receivedUser);
+      setLoading(false);
+      return receivedUser;
+    } catch (error: any) {
+      setLoading(false);
+      const serverError = error.response?.data;
+      const errorMessage = serverError?.details
+        ? `${serverError.error}: ${serverError.details}`
+        : (serverError?.error || 'Google sign-in failed');
+      throw errorMessage;
+    }
+  };
+
   const updateProfile = async (payload: {
     full_name?: string;
     phone?: string;
@@ -130,7 +152,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout, updateProfile }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, googleLogin, logout, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

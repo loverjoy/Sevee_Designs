@@ -1,10 +1,13 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { OAuth2Client } from 'google-auth-library';
 import { query } from '../db';
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'sevee_secret_key_2026';
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
+const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 // Extend Express Request type to include user information
 export interface AuthenticatedRequest extends Request {
@@ -156,6 +159,96 @@ router.post('/login', async (req: Request, res: Response) => {
     console.error('Login error:', error);
     res.status(500).json({ 
       error: 'Internal server error during login',
+      details: error.message || String(error)
+    });
+  }
+});
+
+// Google OAuth - Sign in / Register with Google ID token
+router.post('/google', async (req: Request, res: Response) => {
+  const { idToken } = req.body;
+
+  if (!idToken) {
+    return res.status(400).json({ error: 'Google ID token is required' });
+  }
+
+  if (!GOOGLE_CLIENT_ID) {
+    return res.status(500).json({ error: 'Google OAuth is not configured on the server' });
+  }
+
+  try {
+    // Verify the Google ID token
+    const ticket = await googleClient.verifyIdToken({
+      idToken,
+      audience: GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload || !payload.email) {
+      return res.status(400).json({ error: 'Invalid Google token: no email found' });
+    }
+
+    const googleEmail = payload.email;
+    const googleName = payload.name || '';
+    const googleAvatar = payload.picture || '';
+    const googleSub = payload.sub; // Google's unique user ID
+
+    // Check if user already exists by email
+    let result = await query(
+      'SELECT * FROM public.profiles WHERE email = $1',
+      [googleEmail]
+    );
+
+    let user;
+
+    if (result.rows.length > 0) {
+      // User exists - update avatar if needed and return
+      user = result.rows[0];
+
+      // Update avatar from Google if user doesn't have one
+      if (!user.avatar_url && googleAvatar) {
+        await query(
+          'UPDATE public.profiles SET avatar_url = $1 WHERE id = $2',
+          [googleAvatar, user.id]
+        );
+        user.avatar_url = googleAvatar;
+      }
+    } else {
+      // New user - create account
+      // Generate a unique username from email
+      let baseUsername = googleEmail.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (!baseUsername || baseUsername.length < 3) baseUsername = 'user';
+
+      let username = baseUsername;
+      let counter = 1;
+      while (true) {
+        const usernameCheck = await query('SELECT id FROM public.profiles WHERE username = $1', [username]);
+        if (usernameCheck.rows.length === 0) break;
+        username = `${baseUsername}${counter}`;
+        counter++;
+      }
+
+      const insertResult = await query(
+        `INSERT INTO public.profiles (email, username, full_name, avatar_url, role)
+         VALUES ($1, $2, $3, $4, 'user')
+         RETURNING id, email, username, full_name, phone, avatar_url, role, created_at`,
+        [googleEmail, username, googleName || null, googleAvatar || null]
+      );
+      user = insertResult.rows[0];
+    }
+
+    // Generate JWT
+    const token = jwt.sign(
+      { id: user.id, email: user.email, username: user.username, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({ token, user });
+  } catch (error: any) {
+    console.error('Google OAuth error:', error);
+    res.status(500).json({
+      error: 'Google authentication failed',
       details: error.message || String(error)
     });
   }

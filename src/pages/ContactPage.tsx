@@ -44,7 +44,7 @@ const ContactPage: React.FC = () => {
     }
   };
 
-  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyB_LJOYJL-84SMuxNB7LtRGhxEQLjswvy0&q=Bebere+Oduom,+Kumasi,+Ashanti,+Ghana`;
+  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_KEY}&q=Bebere+Oduom,+Kumasi,+Ashanti,+Ghana`;
 
   return (
     <div className="pt-32 max-w-7xl mx-auto px-6 space-y-16 min-h-screen font-sans">

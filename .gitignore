@@ -29,3 +29,5 @@ server/uploads/
 *.sw?
 
 .vercel
+server/Sevee_Designs1.env
+setupGoogleauth.md

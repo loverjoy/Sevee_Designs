@@ -37,6 +37,10 @@ const CATEGORY_KEYWORDS: Record<string, string[]> = {
   chair: ['chair', 'stool', 'bench', 'seating'],
   bed: ['bed', 'headboard', 'bedroom', 'platform bed'],
   decor: ['decor', 'mirror', 'tray', 'accessory', 'accessories', 'box'],
+  executive: ['executive', 'office', 'boss', 'director', 'manager', 'ceo', 'corporate'],
+  visitor: ['visitor', 'guest', 'waiting', 'reception', 'meeting'],
+  sofa: ['sofa', 'lounge', 'couch', 'rest', 'relax'],
+  stylish: ['stylish', 'modern', 'contemporary', 'trendy', 'fashion'],
 };
 
 interface ChatMessage {
@@ -179,7 +183,8 @@ Key brand details to use:
 - Styling: Sharp geometric angles, clean minimalist forms, premium oil-rubbed finishes.
 - Delivery: Greater Accra (1-3 days, GHS 50), Kumasi/Tamale (3-5 days, GHS 120), International (base fee GHS 450).
 - Bespoke Designs: Customers can contact us via our Contact Page to submit custom dimensional requests.
-- Response guidelines: Keep responses concise, elegant, and professional (1-3 sentences per turn). Use database context injections if provided to answer order queries or product recommendations directly. If no database context is provided but you need to reference orders or products, explain that you can query them if they provide the order number or search terms.`;
+- Product Categories: We offer Executive/Office chairs (EXTRA, EXPECT, MAXI, VICTORY, KINGS, CHIEFS, ROYALS, etc.), Sofa/Lounge (REST), Visitor Chairs (EIGHT, EIGHT VISITOR), and Stylish Collection (ZENITH, JOY, ORANGE, MINA, TASK).
+- Response guidelines: Keep responses concise, elegant, and professional (1-3 sentences per turn). Use database context injections if provided to answer order queries or product recommendations directly. If no database context is provided but you need to reference orders or products, explain that you can query them if they provide the order number or search terms. When recommending products, mention their name, category, and price if available.`;
 
       // Build contents array for Gemini API (User & Model history, ending with new prompt + context)
       const contents: any[] = [];
@@ -259,10 +264,22 @@ Key brand details to use:
     responseText = `We deliver across Ghana and internationally! Delivery in Greater Accra takes 1-3 business days (GHS 50), regional hubs like Kumasi/Tamale take 3-5 business days (GHS 120), and international shipments start at a base fee of GHS 450.`;
   } else if (lowercaseMsg.includes('custom') || lowercaseMsg.includes('bespoke') || lowercaseMsg.includes('dimension') || lowercaseMsg.includes('size')) {
     responseText = `We love creating bespoke designs tailored to your specific space! To submit a custom request with your dimensions and wood preference, please head to our Contact Page and fill out the details. Our design consultants will get back to you with a sketch and quotation.`;
+  } else if (lowercaseMsg.includes('executive') || lowercaseMsg.includes('office') || lowercaseMsg.includes('boss') || lowercaseMsg.includes('director')) {
+    responseText = `We have an impressive Executive/Office collection! Our range includes ergonomic chairs like EXTRA, EXPECT, MAXI, and VICTORY, as well as premium options like KINGS, CHIEFS, and ROYALS. Prices range from GHS 1,400 to GHS 2,200. Would you like me to search for a specific style?`;
+  } else if (lowercaseMsg.includes('visitor') || lowercaseMsg.includes('guest') || lowercaseMsg.includes('waiting') || lowercaseMsg.includes('reception')) {
+    responseText = `Our Visitor Chair collection is perfect for waiting areas and meeting rooms. We have the EIGHT and EIGHT VISITOR series, priced at GHS 800-850. These are durable, comfortable chairs designed for professional settings.`;
+  } else if (lowercaseMsg.includes('sofa') || lowercaseMsg.includes('lounge') || lowercaseMsg.includes('couch') || lowercaseMsg.includes('rest')) {
+    responseText = `For relaxation, check out our Sofa/Lounge collection! The REST series offers premium comfort for your living space. Would you like to see more options?`;
+  } else if (lowercaseMsg.includes('stylish') || lowercaseMsg.includes('modern') || lowercaseMsg.includes('contemporary')) {
+    responseText = `Our Stylish Collection features modern, contemporary designs! Options include ZENITH, JOY, ORANGE, MINA, and TASK, ranging from GHS 900 to GHS 1,200. These pieces blend comfort with contemporary aesthetics.`;
   } else if (lowercaseMsg.includes('hello') || lowercaseMsg.includes('hi') || lowercaseMsg.includes('hey')) {
     responseText = `Hello! Welcome to SeVee Designs. I am SeVee, your digital woodwork assistant. How can I assist you with your space today? You can ask me to track an order, search products, or explain our materials and delivery.`;
+  } else if (lowercaseMsg.includes('price') || lowercaseMsg.includes('cost') || lowercaseMsg.includes('how much')) {
+    responseText = `Our furniture ranges from GHS 800 for visitor chairs to GHS 2,500 for premium sofas. Executive chairs typically range from GHS 1,400 to GHS 2,200. What type of furniture are you looking for? I can show you specific options.`;
+  } else if (lowercaseMsg.includes('stock') || lowercaseMsg.includes('available') || lowercaseMsg.includes('in stock')) {
+    responseText = `All our displayed products are currently in stock! Each item has varying quantities available. Would you like me to check the availability of a specific product?`;
   } else {
-    responseText = `Thank you for reaching out. I'm here to assist you with SeVee Designs. Could you tell me more about what you're looking for? You can ask about our sustainable wood materials, delivery rates, product availability, or track an order by typing your order number.`;
+    responseText = `Thank you for reaching out. I'm here to assist you with SeVee Designs. Could you tell me more about what you're looking for? You can ask about our Executive/Office chairs, Visitor chairs, Stylish collection, delivery rates, or track an order by typing your order number.`;
   }
 
   return res.json({

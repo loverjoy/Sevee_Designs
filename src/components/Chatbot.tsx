@@ -343,11 +343,11 @@ const Chatbot: React.FC = () => {
               <span>Track Order</span>
             </button>
             <button
-              onClick={() => handleSuggestionClick("Show me your dining tables")}
+              onClick={() => handleSuggestionClick("Show me executive office chairs")}
               className="px-2.5 py-1 text-[10px] font-sans font-medium tracking-wide border border-border hover:border-accent hover:text-accent bg-background cursor-pointer rounded-none flex items-center space-x-1 transition-colors"
             >
               <Search className="w-3 h-3" />
-              <span>Browse Tables</span>
+              <span>Executive Chairs</span>
             </button>
             <button
               onClick={() => handleSuggestionClick("What materials do you use?")}
@@ -362,6 +362,20 @@ const Chatbot: React.FC = () => {
             >
               <Truck className="w-3 h-3" />
               <span>Delivery Zones</span>
+            </button>
+            <button
+              onClick={() => handleSuggestionClick("Show me visitor chairs")}
+              className="px-2.5 py-1 text-[10px] font-sans font-medium tracking-wide border border-border hover:border-accent hover:text-accent bg-background cursor-pointer rounded-none flex items-center space-x-1 transition-colors"
+            >
+              <Search className="w-3 h-3" />
+              <span>Visitor Chairs</span>
+            </button>
+            <button
+              onClick={() => handleSuggestionClick("Show me the stylish collection")}
+              className="px-2.5 py-1 text-[10px] font-sans font-medium tracking-wide border border-border hover:border-accent hover:text-accent bg-background cursor-pointer rounded-none flex items-center space-x-1 transition-colors"
+            >
+              <Search className="w-3 h-3" />
+              <span>Stylish Collection</span>
             </button>
           </div>
 

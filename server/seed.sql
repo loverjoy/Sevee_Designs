@@ -40,6 +40,22 @@ INSERT INTO public.categories (id, name, slug, description, image_url, sort_orde
 VALUES
   ('c1000000-0000-0000-0000-000000000005', 'Accessories', 'accessories', 'Lighting, clocks, mirrors, and decor objects.', '/uploads/cat_accessories.webp', 5)
   ON CONFLICT (id) DO NOTHING;
+INSERT INTO public.categories (id, name, slug, description, image_url, sort_order)
+VALUES
+  ('c1000000-0000-0000-0000-000000000006', 'Executive/Office', 'executive-office', 'Executive chairs, visitor seating, and premium office furniture.', '/uploads/cat_executive_office.webp', 6)
+  ON CONFLICT (id) DO NOTHING;
+INSERT INTO public.categories (id, name, slug, description, image_url, sort_order)
+VALUES
+  ('c1000000-0000-0000-0000-000000000007', 'Sofa/Lounge', 'sofa-lounge', 'Comfortable sofas and lounge seating for relaxation.', '/uploads/cat_sofa_lounge.webp', 7)
+  ON CONFLICT (id) DO NOTHING;
+INSERT INTO public.categories (id, name, slug, description, image_url, sort_order)
+VALUES
+  ('c1000000-0000-0000-0000-000000000008', 'Visitor Chair', 'visitor-chair', 'Visitor chairs for meetings and waiting areas.', '/uploads/cat_visitor_chair.webp', 8)
+  ON CONFLICT (id) DO NOTHING;
+INSERT INTO public.categories (id, name, slug, description, image_url, sort_order)
+VALUES
+  ('c1000000-0000-0000-0000-000000000009', 'Stylish Collection', 'stylish-collection', 'Stylish and modern furniture pieces for contemporary spaces.', '/uploads/cat_stylish_collection.webp', 9)
+  ON CONFLICT (id) DO NOTHING;
 
 -- 3. Insert Products
 INSERT INTO public.products (id, category_id, name, slug, item_code, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)

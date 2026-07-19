@@ -1,31 +1,17 @@
 import { Router, Request, Response } from 'express';
+import rateLimit from 'express-rate-limit';
 import { query } from '../db';
 
 const router = Router();
 
-const rateLimitWindowMs = 60 * 1000; // 1 minute
-const rateLimitMaxRequests = 30; // max 30 requests per minute per IP
-const ipRequestCounts = new Map<string, { count: number; resetTime: number }>();
-
-const chatbotRateLimiter = (req: Request, res: Response, next: any) => {
-  const ip = (req.headers['x-forwarded-for'] as string) || req.ip || req.socket.remoteAddress || 'unknown';
-  const now = Date.now();
-  const limitInfo = ipRequestCounts.get(ip);
-
-  if (!limitInfo || now > limitInfo.resetTime) {
-    ipRequestCounts.set(ip, { count: 1, resetTime: now + rateLimitWindowMs });
-    return next();
-  }
-
-  limitInfo.count += 1;
-  if (limitInfo.count > rateLimitMaxRequests) {
-    return res.status(429).json({
-      error: 'Too many chatbot requests. Please wait a moment before trying again.'
-    });
-  }
-
-  next();
-};
+// Rate limiter for chatbot (30 requests per minute per IP)
+const chatbotRateLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many chatbot requests. Please wait a moment before trying again.' },
+});
 
 // Regular expressions to detect order numbers
 // SeVee order numbers look like: SD-YYYYMMDD-NNNNNN (e.g., SD-20260620-001001)

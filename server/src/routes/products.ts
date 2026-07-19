@@ -3,7 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { query } from '../db';
-import { authenticateToken, requireAdmin, requireStaff } from './auth';
+import { authenticateToken, requireAdmin, requireStaff, AuthenticatedRequest } from './auth';
 
 const router = Router();
 
@@ -57,7 +57,7 @@ router.get('/categories', async (req: Request, res: Response) => {
 });
 
 // GET: Shop Products (with filter, search, sort, pagination)
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (req: AuthenticatedRequest, res: Response) => {
   const { category, q, sort, limit = '24', offset = '0', isAdminView = 'false' } = req.query;
 
   try {
@@ -69,8 +69,9 @@ router.get('/', async (req: Request, res: Response) => {
     `;
     const params: any[] = [];
 
-    // Filter by active unless in admin view
-    if (isAdminView !== 'true') {
+    // Filter by active unless in admin view WITH admin authentication
+    const isStaff = req.user && (req.user.role === 'admin' || req.user.role === 'superadmin' || req.user.role === 'salesperson');
+    if (isAdminView !== 'true' || !isStaff) {
       sql += ' AND p.is_active = true';
     }
 
@@ -449,7 +450,7 @@ router.post('/upload', authenticateToken, requireAdmin, upload.single('file'), (
     });
   } catch (error: any) {
     console.error('File upload error:', error);
-    res.status(500).json({ error: error.message || 'File upload failed' });
+    res.status(500).json({ error: 'File upload failed' });
   }
 });
 

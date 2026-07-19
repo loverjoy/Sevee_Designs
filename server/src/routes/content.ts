@@ -255,7 +255,7 @@ router.post('/blogs/ai-generate', authenticateToken, requireAdmin, async (req: R
     });
   } catch (error: any) {
     console.error('AI blog generation error:', error);
-    res.status(500).json({ error: error.message || 'AI generation failed' });
+    res.status(500).json({ error: 'AI generation failed' });
   }
 });
 

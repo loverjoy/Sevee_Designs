@@ -5,7 +5,11 @@ import { OAuth2Client } from 'google-auth-library';
 import { query } from '../db';
 
 const router = Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'sevee_secret_key_2026';
+if (!process.env.JWT_SECRET) {
+  console.error('[FATAL] JWT_SECRET environment variable is not set. Refusing to start with insecure default.');
+  process.exit(1);
+}
+const JWT_SECRET = process.env.JWT_SECRET;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
@@ -111,8 +115,7 @@ router.post('/register', async (req: Request, res: Response) => {
       return res.status(409).json({ error: 'Username or email already registered' });
     }
     res.status(500).json({ 
-      error: 'Internal server error during registration',
-      details: error.message || String(error)
+      error: 'Internal server error during registration'
     });
   }
 });
@@ -158,8 +161,7 @@ router.post('/login', async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error('Login error:', error);
     res.status(500).json({ 
-      error: 'Internal server error during login',
-      details: error.message || String(error)
+      error: 'Internal server error during login'
     });
   }
 });
@@ -248,8 +250,7 @@ router.post('/google', async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error('Google OAuth error:', error);
     res.status(500).json({
-      error: 'Google authentication failed',
-      details: error.message || String(error)
+      error: 'Google authentication failed'
     });
   }
 });

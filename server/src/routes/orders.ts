@@ -4,11 +4,23 @@ import pool, { query } from '../db';
 import { authenticateToken, requireStaff, AuthenticatedRequest } from './auth';
 
 const router = Router();
-const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY || 'sk_test_mock_paystack_secret_key_123456';
+const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY || '';
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 
 import Stripe from 'stripe';
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || 'sk_test_mock_stripe_secret_key_123456';
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
+const CLIENT_URL = (process.env.CLIENT_URL || 'http://localhost:5173').split(',')[0].trim();
+
+// HTML escape helper to prevent XSS in email templates
+const escapeHtml = (str: string): string => {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
 // Helper to calculate delivery fee based on zone
@@ -74,8 +86,8 @@ const sendOrderStatusEmail = async (orderId: string, status: string) => {
         </div>
         <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 30px; border: 1px solid #ede9e3;">
           <h3 style="font-family: 'Playfair Display', serif; border-bottom: 1px solid #ede9e3; padding-bottom: 10px;">Order Status Update</h3>
-          <p>Hello <strong>${order.full_name || 'Customer'}</strong>,</p>
-          <p>The status of your order <strong>#${order.order_number}</strong> has been updated to: <span style="background-color: #EDE9E3; padding: 3px 8px; font-weight: bold; text-transform: uppercase;">${status}</span></p>
+          <p>Hello <strong>${escapeHtml(order.full_name || 'Customer')}</strong>,</p>
+          <p>The status of your order <strong>#${escapeHtml(order.order_number)}</strong> has been updated to: <span style="background-color: #EDE9E3; padding: 3px 8px; font-weight: bold; text-transform: uppercase;">${escapeHtml(status)}</span></p>
           
           <h4 style="font-family: 'Playfair Display', serif; margin-top: 25px;">Order Details</h4>
           <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
@@ -89,7 +101,7 @@ const sendOrderStatusEmail = async (orderId: string, status: string) => {
             <tbody>
               ${items.map(item => `
                 <tr style="border-bottom: 1px solid #f9f8f6;">
-                  <td style="padding: 8px 0;">${item.product_name}</td>
+                  <td style="padding: 8px 0;">${escapeHtml(item.product_name)}</td>
                   <td style="padding: 8px 0; text-align: center;">${item.quantity}</td>
                   <td style="padding: 8px 0; text-align: right;">GHS ${parseFloat(item.unit_price).toFixed(2)}</td>
                 </tr>
@@ -159,7 +171,7 @@ const sendOrderStatusSms = async (orderId: string, status: string) => {
       return;
     }
 
-    const message = `SEVEE DESIGNS: Hello ${order.full_name || 'Customer'}, the status of your order #${order.order_number} has been updated to ${status.toUpperCase()}. Track here: http://localhost:5173/dashboard?tab=orders`;
+    const message = `SEVEE DESIGNS: Hello ${order.full_name || 'Customer'}, the status of your order #${order.order_number} has been updated to ${status.toUpperCase()}. Track here: ${CLIENT_URL}/dashboard?tab=orders`;
 
     if (SMS_API_KEY === 'mock_sms_api_key' || SMS_API_KEY.startsWith('mock')) {
       console.log(`[SMS MOCK] Dispatching SMS via Carrier to ${phone}:`);
@@ -260,7 +272,7 @@ router.get('/verify', async (req, res) => {
       await client.query('COMMIT');
       client.release();
       // Redirect to frontend order success page
-      return res.redirect(`http://localhost:5173/dashboard?tab=orders&success=true&order=${order.order_number}`);
+      return res.redirect(`${CLIENT_URL}/dashboard?tab=orders&success=true&order=${order.order_number}`);
     }
 
     let isSuccess = false;
@@ -325,7 +337,7 @@ router.get('/verify', async (req, res) => {
       notifyUserOfOrderStatusUpdate(order.id, 'confirmed').catch(console.error);
 
       // Redirect client to checkout success
-      res.redirect(`http://localhost:5173/dashboard?tab=orders&success=true&order=${order.order_number}`);
+      res.redirect(`${CLIENT_URL}/dashboard?tab=orders&success=true&order=${order.order_number}`);
     } else {
       await client.query(
         `UPDATE public.orders SET payment_status = 'failed' WHERE id = $1`,
@@ -333,7 +345,7 @@ router.get('/verify', async (req, res) => {
       );
       await client.query('COMMIT');
       client.release();
-      res.redirect(`http://localhost:5173/checkout?failed=true&order=${order.order_number}`);
+      res.redirect(`${CLIENT_URL}/checkout?failed=true&order=${order.order_number}`);
     }
   } catch (error) {
     if (client) {
@@ -374,7 +386,7 @@ router.get('/stripe/verify', async (req, res) => {
     if (order.payment_status === 'completed') {
       await client.query('COMMIT');
       client.release();
-      return res.redirect(`http://localhost:5173/dashboard?tab=orders&success=true&order=${order.order_number}`);
+      return res.redirect(`${CLIENT_URL}/dashboard?tab=orders&success=true&order=${order.order_number}`);
     }
 
     let isSuccess = false;
@@ -436,7 +448,7 @@ router.get('/stripe/verify', async (req, res) => {
       notifyUserOfOrderStatusUpdate(order.id, 'confirmed').catch(console.error);
 
       // Redirect client to checkout success
-      res.redirect(`http://localhost:5173/dashboard?tab=orders&success=true&order=${order.order_number}`);
+      res.redirect(`${CLIENT_URL}/dashboard?tab=orders&success=true&order=${order.order_number}`);
     } else {
       await client.query(
         `UPDATE public.orders SET payment_status = 'failed' WHERE id = $1`,
@@ -444,7 +456,7 @@ router.get('/stripe/verify', async (req, res) => {
       );
       await client.query('COMMIT');
       client.release();
-      res.redirect(`http://localhost:5173/checkout?failed=true&order=${order.order_number}`);
+      res.redirect(`${CLIENT_URL}/checkout?failed=true&order=${order.order_number}`);
     }
   } catch (error) {
     if (client) {
@@ -652,7 +664,7 @@ router.post('/checkout', authenticateToken, async (req: AuthenticatedRequest, re
         orderId: order.id,
         orderNumber: order.order_number,
         total,
-        authorization_url: `http://localhost:5173/dashboard?tab=orders&success=true&order=${order.order_number}`,
+        authorization_url: `${CLIENT_URL}/dashboard?tab=orders&success=true&order=${order.order_number}`,
         reference: `postpay_${order.id}`,
       });
     }
@@ -704,7 +716,7 @@ router.post('/checkout', authenticateToken, async (req: AuthenticatedRequest, re
           ],
           mode: 'payment',
           success_url: `${req.protocol}://${req.get('host')}/api/orders/stripe/verify?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
-          cancel_url: `http://localhost:5173/checkout?failed=true&order=${order.order_number}`,
+          cancel_url: `${CLIENT_URL}/checkout?failed=true&order=${order.order_number}`,
           metadata: {
             orderId: order.id,
             couponId: couponId || '',
@@ -727,7 +739,7 @@ router.post('/checkout', authenticateToken, async (req: AuthenticatedRequest, re
       } catch (stripeError: any) {
         console.error('Stripe Session creation error:', stripeError);
         await query(`UPDATE public.orders SET status = 'cancelled', payment_status = 'failed' WHERE id = $1`, [order.id]);
-        return res.status(500).json({ error: `Stripe payment initialization failed: ${stripeError.message}` });
+        return res.status(500).json({ error: 'Stripe payment initialization failed' });
       }
     } else {
       // Default: Paystack checkout for GHS
@@ -736,7 +748,7 @@ router.post('/checkout', authenticateToken, async (req: AuthenticatedRequest, re
 
       if (PAYSTACK_SECRET_KEY.startsWith('sk_test_mock')) {
         // Return a simulated redirect for local testing without network requests
-        const mockAuthUrl = `http://localhost:5000/api/orders/verify?reference=${paystackRef}`;
+        const mockAuthUrl = `${CLIENT_URL}/dashboard?tab=orders&success=true&order=${order.order_number}`;
         
         // Save reference in order notes
         await query(
@@ -804,7 +816,7 @@ router.post('/checkout', authenticateToken, async (req: AuthenticatedRequest, re
       client.release();
     }
     console.error('Checkout error:', error);
-    res.status(500).json({ error: error.message || 'Checkout failed' });
+    res.status(500).json({ error: 'Checkout failed' });
   }
 });
 
@@ -822,7 +834,7 @@ router.post('/webhook', async (req, res) => {
     .update(rawBody)
     .digest('hex');
 
-  if (hash !== signature && !PAYSTACK_SECRET_KEY.startsWith('sk_test_mock')) {
+  if (hash !== signature) {
     return res.status(401).send('Invalid webhook signature');
   }
 

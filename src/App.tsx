@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'sonner';
 
@@ -14,7 +14,7 @@ import AdminLayout from './components/layouts/AdminLayout';
 import SalespersonLayout from './components/layouts/SalespersonLayout';
 import Chatbot from './components/Chatbot';
 
-// Public Pages
+// Public Pages (eagerly loaded - critical for first paint)
 import HomePage from './pages/HomePage';
 import ShopPage from './pages/ShopPage';
 import ProductDetailPage from './pages/ProductDetailPage';
@@ -26,21 +26,21 @@ import ContactPage from './pages/ContactPage';
 import FAQPage from './pages/FAQPage';
 import BlogPage from './pages/BlogPage';
 
-// Customer Protected Page
-import DashboardPage from './pages/DashboardPage';
+// Customer Protected Page (lazy loaded)
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 
-// Admin Portal Pages
-import AdminDashboardPage from './pages/admin/AdminDashboardPage';
-import AdminProductsPage from './pages/admin/AdminProductsPage';
-import AdminProductFormPage from './pages/admin/AdminProductFormPage';
-import AdminOrdersPage from './pages/admin/AdminOrdersPage';
-import AdminCouponsPage from './pages/admin/AdminCouponsPage';
-import AdminStaffPage from './pages/admin/AdminStaffPage';
-import AdminReportsPage from './pages/admin/AdminReportsPage';
+// Admin Portal Pages (lazy loaded)
+const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage'));
+const AdminProductsPage = lazy(() => import('./pages/admin/AdminProductsPage'));
+const AdminProductFormPage = lazy(() => import('./pages/admin/AdminProductFormPage'));
+const AdminOrdersPage = lazy(() => import('./pages/admin/AdminOrdersPage'));
+const AdminCouponsPage = lazy(() => import('./pages/admin/AdminCouponsPage'));
+const AdminStaffPage = lazy(() => import('./pages/admin/AdminStaffPage'));
+const AdminReportsPage = lazy(() => import('./pages/admin/AdminReportsPage'));
 
-// Salesperson Portal Pages
-import SalespersonOrdersPage from './pages/salesperson/SalespersonOrdersPage';
-import SalespersonReportsPage from './pages/salesperson/SalespersonReportsPage';
+// Salesperson Portal Pages (lazy loaded)
+const SalespersonOrdersPage = lazy(() => import('./pages/salesperson/SalespersonOrdersPage'));
+const SalespersonReportsPage = lazy(() => import('./pages/salesperson/SalespersonReportsPage'));
 
 // Route Guards
 const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: string[] }> = ({
@@ -72,6 +72,13 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: strin
   return <>{children}</>;
 };
 
+// Loading fallback for lazy-loaded routes
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background text-foreground font-sans text-xs">
+    Loading...
+  </div>
+);
+
 // Storefront Wrapper to include Header/Footer on public routes
 const StorefrontLayout: React.FC = () => {
   return (
@@ -94,7 +101,9 @@ const StorefrontLayout: React.FC = () => {
             path="/dashboard"
             element={
               <ProtectedRoute allowedRoles={['user']}>
-                <DashboardPage />
+                <Suspense fallback={<PageLoader />}>
+                  <DashboardPage />
+                </Suspense>
               </ProtectedRoute>
             }
           />
@@ -123,14 +132,14 @@ const App: React.FC = () => {
                   </ProtectedRoute>
                 }
               >
-                <Route index element={<AdminDashboardPage />} />
-                <Route path="products" element={<AdminProductsPage />} />
-                <Route path="products/new" element={<AdminProductFormPage />} />
-                <Route path="products/:id/edit" element={<AdminProductFormPage />} />
-                <Route path="orders" element={<AdminOrdersPage />} />
-                <Route path="reports" element={<AdminReportsPage />} />
-                <Route path="coupons" element={<AdminCouponsPage />} />
-                <Route path="staff" element={<AdminStaffPage />} />
+                <Route index element={<Suspense fallback={<PageLoader />}><AdminDashboardPage /></Suspense>} />
+                <Route path="products" element={<Suspense fallback={<PageLoader />}><AdminProductsPage /></Suspense>} />
+                <Route path="products/new" element={<Suspense fallback={<PageLoader />}><AdminProductFormPage /></Suspense>} />
+                <Route path="products/:id/edit" element={<Suspense fallback={<PageLoader />}><AdminProductFormPage /></Suspense>} />
+                <Route path="orders" element={<Suspense fallback={<PageLoader />}><AdminOrdersPage /></Suspense>} />
+                <Route path="reports" element={<Suspense fallback={<PageLoader />}><AdminReportsPage /></Suspense>} />
+                <Route path="coupons" element={<Suspense fallback={<PageLoader />}><AdminCouponsPage /></Suspense>} />
+                <Route path="staff" element={<Suspense fallback={<PageLoader />}><AdminStaffPage /></Suspense>} />
                 <Route path="*" element={<Navigate to="/admin" replace />} />
               </Route>
 
@@ -143,9 +152,9 @@ const App: React.FC = () => {
                   </ProtectedRoute>
                 }
               >
-                <Route index element={<SalespersonReportsPage />} />
-                <Route path="orders" element={<SalespersonOrdersPage />} />
-                <Route path="reports" element={<SalespersonReportsPage />} />
+                <Route index element={<Suspense fallback={<PageLoader />}><SalespersonReportsPage /></Suspense>} />
+                <Route path="orders" element={<Suspense fallback={<PageLoader />}><SalespersonOrdersPage /></Suspense>} />
+                <Route path="reports" element={<Suspense fallback={<PageLoader />}><SalespersonReportsPage /></Suspense>} />
                 <Route path="*" element={<Navigate to="/salesperson" replace />} />
               </Route>
 

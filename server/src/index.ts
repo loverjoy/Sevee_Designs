@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import path from 'path';
 import fs from 'fs';
 import cron from 'node-cron';
@@ -30,6 +32,31 @@ if (clientUrl) {
     }
   });
 }
+
+// Security headers
+app.use(helmet({
+  contentSecurityPolicy: false, // Disable CSP to avoid breaking inline styles in emails
+  crossOriginEmbedderPolicy: false,
+}));
+
+// Global rate limiter (100 requests per 15 minutes per IP)
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' },
+});
+app.use(globalLimiter);
+
+// Strict rate limiter for auth endpoints (10 requests per 15 minutes per IP)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many authentication attempts, please try again later.' },
+});
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -67,7 +94,7 @@ if (!fs.existsSync(uploadDir)) {
 app.use('/uploads', express.static(uploadDir));
 
 // API routes
-app.use('/api/auth', authRouter);
+app.use('/api/auth', authLimiter, authRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/content', contentRouter);
@@ -86,7 +113,7 @@ app.use((req, res) => {
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Unhandled Server Error:', err);
-  res.status(err.status || 500).json({ error: err.message || 'Internal server error' });
+  res.status(err.status || 500).json({ error: 'Internal server error' });
 });
 
 // Daily AI Blog post generation (The Journal)

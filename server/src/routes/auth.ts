@@ -65,6 +65,66 @@ export const requireSuperAdmin = (req: AuthenticatedRequest, res: Response, next
   next();
 };
 
+// Admin/Superadmin Registration (requires secret setup token)
+router.post('/register-admin', async (req: Request, res: Response) => {
+  const { email, username, full_name, phone, password, role, setup_token } = req.body;
+
+  const ADMIN_SETUP_TOKEN = process.env.ADMIN_SETUP_TOKEN;
+  if (!ADMIN_SETUP_TOKEN) {
+    return res.status(503).json({ error: 'Admin registration is not configured on this server' });
+  }
+
+  if (!setup_token || setup_token !== ADMIN_SETUP_TOKEN) {
+    return res.status(403).json({ error: 'Invalid setup token' });
+  }
+
+  if (!email || !username || !password || !role) {
+    return res.status(400).json({ error: 'Email, username, password, and role are required' });
+  }
+
+  if (!['admin', 'superadmin'].includes(role)) {
+    return res.status(400).json({ error: 'Role must be either admin or superadmin' });
+  }
+
+  try {
+    const existingUser = await query(
+      'SELECT id FROM public.profiles WHERE email = $1 OR username = $2',
+      [email, username]
+    );
+
+    if (existingUser.rows.length > 0) {
+      return res.status(409).json({ error: 'Username or email already registered' });
+    }
+
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+    const avatarUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${username}`;
+
+    const result = await query(
+      `INSERT INTO public.profiles (email, username, full_name, phone, avatar_url, role, password_hash)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id, email, username, full_name, phone, avatar_url, role, created_at`,
+      [email, username, full_name || null, phone || null, avatarUrl, role, passwordHash]
+    );
+
+    const user = result.rows[0];
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email, username: user.username, role: user.role },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.status(201).json({ token, user });
+  } catch (error: any) {
+    console.error('Admin registration error:', error);
+    if (error.code === '23505') {
+      return res.status(409).json({ error: 'Username or email already registered' });
+    }
+    res.status(500).json({ error: 'Internal server error during registration' });
+  }
+});
+
 // Register
 router.post('/register', async (req: Request, res: Response) => {
   const { email, username, full_name, phone, password } = req.body;

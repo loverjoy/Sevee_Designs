@@ -21,7 +21,7 @@ const escapeHtml = (str: string): string => {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 };
-const stripe = new Stripe(STRIPE_SECRET_KEY);
+const stripe = STRIPE_SECRET_KEY ? new Stripe(STRIPE_SECRET_KEY) : null;
 
 // Helper to calculate delivery fee based on zone
 const getDeliveryFee = async (region: string, country?: string): Promise<number> => {

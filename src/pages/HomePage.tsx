@@ -222,7 +222,7 @@ const HomePage: React.FC = () => {
       <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div className="aspect-[4/3] bg-secondary border border-border overflow-hidden shadow-card">
           <img
-            src="https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=800"
+            src="/logo.jpg"
             alt="SeVee Designs Joinery Studio"
             className="w-full h-full object-cover"
           />

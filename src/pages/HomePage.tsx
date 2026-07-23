@@ -47,9 +47,9 @@ const HomePage: React.FC = () => {
         {/* Dark image background overlay */}
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1600"
-            alt="SeVee Designs Luxury Living Room"
-            className="w-full h-full object-cover opacity-35"
+            src="/logo.jpg"
+            alt="SeVee Designs"
+            className="w-full h-full object-cover opacity-20"
           />
         </div>
 
@@ -222,7 +222,7 @@ const HomePage: React.FC = () => {
       <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div className="aspect-[4/3] bg-secondary border border-border overflow-hidden shadow-card">
           <img
-            src="https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=800"
+            src="/logo.jpg"
             alt="SeVee Designs Joinery Studio"
             className="w-full h-full object-cover"
           />
@@ -262,7 +262,7 @@ const HomePage: React.FC = () => {
             <div key={blog.id} className="group border border-border bg-card shadow-card hover:shadow-hover transition-all flex flex-col h-full">
               <div className="aspect-[16/10] overflow-hidden bg-secondary">
                 <img
-                  src={resolveImageUrl(blog.image_url) || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=600'}
+                  src={resolveImageUrl(blog.image_url) || '/logo.jpg'}
                   alt={blog.title}
                   className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
                 />

@@ -75,7 +75,7 @@ const BlogListPage: React.FC = () => {
             <div key={blog.id} className="group border border-border bg-card shadow-card hover:shadow-hover transition-all flex flex-col h-full">
               <div className="aspect-[16/10] overflow-hidden bg-secondary border-b border-border">
                 <img
-                  src={resolveImageUrl(blog.image_url) || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=600'}
+                  src={resolveImageUrl(blog.image_url) || '/logo.jpg'}
                   alt={blog.title}
                   className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
                 />
@@ -187,7 +187,7 @@ const BlogDetailPage: React.FC<DetailProps> = ({ slug }) => {
       {/* Main Image */}
       <div className="aspect-[21/10] overflow-hidden bg-secondary border border-border shadow-card">
         <img
-          src={resolveImageUrl(blog.image_url) || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=1000'}
+          src={resolveImageUrl(blog.image_url) || '/logo.jpg'}
           alt={blog.title}
           className="w-full h-full object-cover"
         />

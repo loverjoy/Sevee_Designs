@@ -56,7 +56,7 @@ const CartPage: React.FC = () => {
             {items.map((item) => {
               const hasSale = item.product.sale_price !== null && item.product.sale_price !== undefined;
               const unitPrice = parseFloat((hasSale ? item.product.sale_price : item.product.price) as string);
-              const imageUrl = item.product.images && item.product.images.length > 0 ? resolveImageUrl(item.product.images[0]) : 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=300';
+              const imageUrl = item.product.images && item.product.images.length > 0 ? resolveImageUrl(item.product.images[0]) : '/logo.jpg';
 
               return (
                 <div key={item.product.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-6 border-b border-border last:border-b-0 gap-6">

@@ -9,71 +9,80 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-interface ImageMapping {
-  productName: string;
-  images: string[];
-}
-
-function getImageFiles(): string[] {
-  const imagesDir = path.join(__dirname, '../../public/images/products');
-  
-  if (!fs.existsSync(imagesDir)) {
-    fs.mkdirSync(imagesDir, { recursive: true });
-    return [];
-  }
-
-  return fs.readdirSync(imagesDir)
-    .filter(file => /\.(jpg|jpeg|png|webp|gif)$/i.test(file))
-    .map(file => `/images/products/${file}`);
-}
-
-function matchImagesToProducts(productName: string, availableImages: string[]): string[] {
-  const normalizedName = productName.toLowerCase().replace(/[^a-z0-9]/g, '');
-  
-  return availableImages.filter(image => {
-    const imageBaseName = path.basename(image, path.extname(image))
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, '');
-    return imageBaseName.includes(normalizedName) || normalizedName.includes(imageBaseName);
-  });
-}
-
-async function updateProductImages() {
+async function assignImages() {
   const client = await pool.connect();
 
   try {
-    const availableImages = getImageFiles();
-    console.log(`Found ${availableImages.length} images in products directory`);
+    // 1. Get all product images from the images_website folder
+    const imagesDir = path.join(__dirname, '../../images_website');
+    if (!fs.existsSync(imagesDir)) {
+      console.error('images_website directory not found');
+      return;
+    }
 
-    const result = await client.query(
-      'SELECT id, name FROM public.products WHERE images = $1 OR images IS NULL',
-      ['{}']
-    );
+    const imageFiles = fs.readdirSync(imagesDir)
+      .filter(f => /\.(jpg|jpeg|png|webp|gif)$/i.test(f))
+      .map(f => `/images/products/${f}`);
 
-    console.log(`Found ${result.rows.length} products without images`);
+    console.log(`Found ${imageFiles.length} images in images_website/`);
 
-    let updated = 0;
+    // 2. Copy images to server/uploads so they're served by the backend
+    const uploadsDir = path.join(__dirname, '../uploads');
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
 
-    for (const product of result.rows) {
-      const matchedImages = matchImagesToProducts(product.name, availableImages);
-
-      if (matchedImages.length > 0) {
-        await client.query(
-          'UPDATE public.products SET images = $1 WHERE id = $2',
-          [matchedImages, product.id]
-        );
-        console.log(`Updated: ${product.name} with ${matchedImages.length} images`);
-        updated++;
+    for (const file of fs.readdirSync(imagesDir).filter(f => /\.(jpg|jpeg|png|webp|gif)$/i.test(f))) {
+      const src = path.join(imagesDir, file);
+      const dest = path.join(uploadsDir, file);
+      if (!fs.existsSync(dest)) {
+        fs.copyFileSync(src, dest);
+        console.log(`Copied: ${file}`);
       }
     }
 
-    console.log(`\nUpdate complete: ${updated} products updated with images`);
+    // 3. Get all active products
+    const productsRes = await client.query(
+      'SELECT id, name, images FROM public.products WHERE is_active = true ORDER BY created_at ASC'
+    );
+    const products = productsRes.rows;
+    console.log(`Found ${products.length} active products`);
+
+    // 4. Assign images to products that have empty images
+    let updated = 0;
+    let imageIdx = 0;
+
+    for (const product of products) {
+      const currentImages = product.images;
+
+      // Skip products that already have real images (not empty array)
+      if (currentImages && currentImages.length > 0 && currentImages[0] !== '{}') {
+        console.log(`Skipping "${product.name}" - already has ${currentImages.length} image(s)`);
+        continue;
+      }
+
+      // Assign 1-2 images to this product (cycle through available images)
+      const assignedImages = [imageFiles[imageIdx % imageFiles.length]];
+      if (imageFiles.length > 1) {
+        assignedImages.push(imageFiles[(imageIdx + 1) % imageFiles.length]);
+      }
+      imageIdx += 2;
+
+      await client.query(
+        'UPDATE public.products SET images = $1 WHERE id = $2',
+        [assignedImages, product.id]
+      );
+      console.log(`Updated "${product.name}" with images: ${assignedImages.join(', ')}`);
+      updated++;
+    }
+
+    console.log(`\nDone: ${updated} products updated with images`);
   } catch (error) {
-    console.error('Update failed:', error);
+    console.error('Failed:', error);
   } finally {
     client.release();
     await pool.end();
   }
 }
 
-updateProductImages();
+assignImages();

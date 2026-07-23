@@ -34,7 +34,7 @@ const ProductDetailPage: React.FC = () => {
         const res = await client.get(`/products/slug/${slug}`);
         const prod = res.data;
         setProduct(prod);
-        setActiveImage(prod.images && prod.images.length > 0 ? prod.images[0] : 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=800');
+        setActiveImage(prod.images && prod.images.length > 0 ? prod.images[0] : '/logo.jpg');
 
         // No local wishlist status check needed - handled reactively by useWishlist context
       } catch (error) {

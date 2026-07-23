@@ -25,6 +25,7 @@ interface AuthContextType {
     password: string;
   }) => Promise<User>;
   googleLogin: (idToken: string) => Promise<User>;
+  loginWithToken: (token: string, user: User) => void;
   logout: () => void;
   updateProfile: (payload: { full_name?: string; phone?: string; avatar_url?: string }) => Promise<User>;
 }
@@ -109,6 +110,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const loginWithToken = (receivedToken: string, receivedUser: User) => {
+    localStorage.setItem('sevee_token', receivedToken);
+    setToken(receivedToken);
+    setUser(receivedUser);
+  };
+
   const logout = () => {
     localStorage.removeItem('sevee_token');
     setToken(null);
@@ -152,7 +159,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, googleLogin, logout, updateProfile }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, googleLogin, loginWithToken, logout, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

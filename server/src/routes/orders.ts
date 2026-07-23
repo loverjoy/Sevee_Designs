@@ -394,7 +394,7 @@ router.get('/stripe/verify', async (req, res) => {
     if (STRIPE_SECRET_KEY.startsWith('sk_test_mock') || (session_id && session_id.toString().startsWith('cs_mock'))) {
       // Simulated mock payment success
       isSuccess = true;
-    } else {
+    } else if (stripe) {
       // Query Stripe API to verify session status
       const session = await stripe.checkout.sessions.retrieve(session_id as string);
       isSuccess = session.payment_status === 'paid';
@@ -699,6 +699,11 @@ router.post('/checkout', authenticateToken, async (req: AuthenticatedRequest, re
       }
 
       // Real Stripe Checkout Session initialization
+      if (!stripe) {
+        await client.query('ROLLBACK');
+        client.release();
+        return res.status(500).json({ error: 'Payment provider not configured' });
+      }
       try {
         const session = await stripe.checkout.sessions.create({
           payment_method_types: ['card'],

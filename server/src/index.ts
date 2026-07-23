@@ -22,7 +22,12 @@ const PORT = process.env.PORT || 5000;
 
 // Enable CORS
 // CLIENT_URL can be comma-separated for multiple origins (e.g. "https://seveedesigns.com,https://sevee-designs.vercel.app")
-const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'https://seveedesigns.com',
+  'https://www.seveedesigns.com',
+];
 const clientUrl = process.env.CLIENT_URL;
 if (clientUrl) {
   clientUrl.split(',').forEach((url: string) => {
@@ -70,7 +75,7 @@ app.use(cors({
       return callback(null, true);
     } else {
       console.warn(`[CORS] Blocked request from unauthorized origin: ${origin}`);
-      return callback(new Error('Not allowed by CORS'), false);
+      return callback(null, false);
     }
   },
   credentials: true,

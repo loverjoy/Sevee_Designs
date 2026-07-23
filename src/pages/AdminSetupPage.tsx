@@ -6,8 +6,7 @@ import { toast } from 'sonner';
 import client from '../api/client';
 
 const AdminSetupPage: React.FC = () => {
-  const { user } = useAuth();
-  const navigate = useSearchParams();
+  const { user, loginWithToken } = useAuth();
   const [searchParams] = useSearchParams();
   const nav = useNavigate();
 
@@ -62,9 +61,13 @@ const AdminSetupPage: React.FC = () => {
       });
 
       const { token: receivedToken, user: receivedUser } = res.data;
-      localStorage.setItem('sevee_token', receivedToken);
+      loginWithToken(receivedToken, receivedUser);
       toast.success(`Account created! Welcome, ${receivedUser.username}`);
-      window.location.href = '/admin';
+      if (receivedUser.role === 'admin' || receivedUser.role === 'superadmin') {
+        nav('/admin');
+      } else {
+        nav('/dashboard');
+      }
     } catch (error: any) {
       const serverError = error.response?.data;
       toast.error(serverError?.error || 'Registration failed');

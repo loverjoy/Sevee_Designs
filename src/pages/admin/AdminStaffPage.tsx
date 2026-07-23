@@ -455,7 +455,7 @@ const AdminStaffPage: React.FC = () => {
               <ShieldAlert className="text-destructive mx-auto animate-bounce" size={40} />
               <h3 className="font-serif text-lg font-bold text-foreground">Confirm Account Deletion</h3>
               <p className="text-muted-foreground leading-relaxed">
-                Are you sure you want to delete the staff account for **@{selectedStaff.username}** ({selectedStaff.email})? 
+                Are you sure you want to delete the staff account for <strong>@{selectedStaff.username}</strong> ({selectedStaff.email})? 
                 This action is irreversible and will remove all their profile data.
               </p>
               <div className="pt-4 flex justify-center space-x-3">

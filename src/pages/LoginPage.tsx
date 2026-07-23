@@ -26,11 +26,18 @@ const LoginPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const googleButtonRef = useRef<HTMLDivElement>(null);
 
+  const redirectPath = searchParams.get('redirect');
+
+  const getHomePath = (role: string) => {
+    if (role === 'admin' || role === 'superadmin') return '/admin';
+    if (role === 'salesperson') return '/salesperson';
+    return '/dashboard';
+  };
+
   // Redirect if already logged in
-  const redirectPath = searchParams.get('redirect') || '/dashboard';
   useEffect(() => {
     if (user) {
-      navigate(redirectPath);
+      navigate(redirectPath || getHomePath(user.role));
     }
   }, [user, navigate, redirectPath]);
 
@@ -54,9 +61,9 @@ const LoginPage: React.FC = () => {
 
     setLoading(true);
     try {
-      await login(loginIdentifier, password);
+      const loggedUser = await login(loginIdentifier, password);
       toast.success('Successfully logged in!');
-      navigate(redirectPath);
+      navigate(redirectPath || getHomePath(loggedUser.role));
     } catch (error: any) {
       console.error('Login error:', error);
       toast.error(error || 'Invalid credentials');
@@ -126,9 +133,9 @@ const LoginPage: React.FC = () => {
   const handleGoogleCredentialResponse = async (response: { credential: string }) => {
     setLoading(true);
     try {
-      await googleLogin(response.credential);
+      const loggedUser = await googleLogin(response.credential);
       toast.success('Google sign-in successful!');
-      navigate(redirectPath);
+      navigate(redirectPath || getHomePath(loggedUser.role));
     } catch (error: any) {
       console.error('Google login error:', error);
       toast.error(error || 'Google Sign-In failed');

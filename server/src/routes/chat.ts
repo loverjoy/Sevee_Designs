@@ -27,6 +27,7 @@ const CATEGORY_KEYWORDS: Record<string, string[]> = {
   visitor: ['visitor', 'guest', 'waiting', 'reception', 'meeting'],
   sofa: ['sofa', 'lounge', 'couch', 'rest', 'relax'],
   stylish: ['stylish', 'modern', 'contemporary', 'trendy', 'fashion'],
+  student: ['student', 'students', 'school', 'dorm', 'dormitory', 'study', 'classroom', 'university', 'college', 'campus'],
 };
 
 interface ChatMessage {
@@ -169,8 +170,8 @@ Key brand details to use:
 - Styling: Sharp geometric angles, clean minimalist forms, premium oil-rubbed finishes.
 - Delivery: Greater Accra (1-3 days, GHS 50), Kumasi/Tamale (3-5 days, GHS 120), International (base fee GHS 450).
 - Bespoke Designs: Customers can contact us via our Contact Page to submit custom dimensional requests.
-- Product Categories: We offer Executive/Office chairs (EXTRA, EXPECT, MAXI, VICTORY, KINGS, CHIEFS, ROYALS, etc.), Sofa/Lounge (REST), Visitor Chairs (EIGHT, EIGHT VISITOR), and Stylish Collection (ZENITH, JOY, ORANGE, MINA, TASK).
-- Response guidelines: Keep responses concise, elegant, and professional (1-3 sentences per turn). Use database context injections if provided to answer order queries or product recommendations directly. If no database context is provided but you need to reference orders or products, explain that you can query them if they provide the order number or search terms. When recommending products, mention their name, category, and price if available.`;
+- Product Categories: We offer Executive/Office chairs (EXTRA, EXPECT, MAXI, VICTORY, KINGS, CHIEFS, ROYALS, etc.), Sofa/Lounge (REST), Visitor Chairs (EIGHT, EIGHT VISITOR), and Stylish Collection (ZENITH, JOY, ORANGE, MINA, TASK). We do NOT carry student or school furniture — if a user asks about student/school furniture, politely redirect them to our Executive/Office collection as a suitable alternative for study desks and chairs.
+- Response guidelines: Keep responses concise, elegant, and professional (1-3 sentences per turn). Use database context injections if provided to answer order queries or product recommendations directly. If no database context is provided but you need to reference orders or products, explain that you can query them if they provide the order number or search terms. When recommending products, mention their name, category, and price if available. If a user asks about student or school furniture, let them know we don't carry that category but recommend our Office/Executive collection instead.`;
 
       // Build contents array for Gemini API (User & Model history, ending with new prompt + context)
       const contents: any[] = [];
@@ -258,6 +259,8 @@ Key brand details to use:
     responseText = `For relaxation, check out our Sofa/Lounge collection! The REST series offers premium comfort for your living space. Would you like to see more options?`;
   } else if (lowercaseMsg.includes('stylish') || lowercaseMsg.includes('modern') || lowercaseMsg.includes('contemporary')) {
     responseText = `Our Stylish Collection features modern, contemporary designs! Options include ZENITH, JOY, ORANGE, MINA, and TASK, ranging from GHS 900 to GHS 1,200. These pieces blend comfort with contemporary aesthetics.`;
+  } else if (lowercaseMsg.includes('student') || lowercaseMsg.includes('school') || lowercaseMsg.includes('dorm') || lowercaseMsg.includes('study desk') || lowercaseMsg.includes('classroom') || lowercaseMsg.includes('university') || lowercaseMsg.includes('college')) {
+    responseText = `We appreciate your interest, but SeVee Designs does not carry student or school furniture. However, our Executive/Office collection features ergonomic chairs and premium desks that are perfect for study spaces and home offices. Would you like me to show you some options?`;
   } else if (lowercaseMsg.includes('hello') || lowercaseMsg.includes('hi') || lowercaseMsg.includes('hey')) {
     responseText = `Hello! Welcome to SeVee Designs. I am SeVee, your digital woodwork assistant. How can I assist you with your space today? You can ask me to track an order, search products, or explain our materials and delivery.`;
   } else if (lowercaseMsg.includes('price') || lowercaseMsg.includes('cost') || lowercaseMsg.includes('how much')) {

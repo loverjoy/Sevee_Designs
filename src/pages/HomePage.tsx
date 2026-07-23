@@ -4,7 +4,7 @@ import { ArrowRight, Compass, ShieldCheck, Heart, Sparkles } from 'lucide-react'
 import client from '../api/client';
 import ProductCard from '../components/ProductCard';
 import type { Product } from '../contexts/CartContext';
-import { formatPrice } from '../lib/utils';
+import { formatPrice, resolveImageUrl } from '../lib/utils';
 import useSEO from '../hooks/useSEO';
 
 const HomePage: React.FC = () => {
@@ -193,7 +193,7 @@ const HomePage: React.FC = () => {
                 <div key={product.id} className="min-w-[240px] max-w-[240px] bg-card border border-border p-4 space-y-3 shadow-card shrink-0 hover:shadow-hover transition-all">
                   <div className="relative aspect-square overflow-hidden bg-secondary">
                     <img
-                      src={product.images && product.images.length > 0 ? product.images[0] : ''}
+                      src={product.images && product.images.length > 0 ? resolveImageUrl(product.images[0]) : ''}
                       alt={product.name}
                       className="w-full h-full object-cover"
                     />
@@ -262,7 +262,7 @@ const HomePage: React.FC = () => {
             <div key={blog.id} className="group border border-border bg-card shadow-card hover:shadow-hover transition-all flex flex-col h-full">
               <div className="aspect-[16/10] overflow-hidden bg-secondary">
                 <img
-                  src={blog.image_url || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=600'}
+                  src={resolveImageUrl(blog.image_url) || 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=600'}
                   alt={blog.title}
                   className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
                 />

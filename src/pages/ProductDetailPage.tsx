@@ -4,7 +4,7 @@ import { ShoppingCart, Heart, ArrowLeft, Rotate3d, QrCode, X, Check } from 'luci
 import client from '../api/client';
 import { useCart, type Product } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
-import { formatPrice } from '../lib/utils';
+import { formatPrice, resolveImageUrl } from '../lib/utils';
 import { useAuth } from '../contexts/AuthContext';
 import useSEO from '../hooks/useSEO';
 
@@ -124,7 +124,7 @@ const ProductDetailPage: React.FC = () => {
         <div className="space-y-4">
           <div className="aspect-square bg-secondary border border-border overflow-hidden relative shadow-card">
             <img
-              src={activeImage}
+              src={resolveImageUrl(activeImage)}
               alt={product.name}
               className="w-full h-full object-cover object-center"
             />
@@ -146,7 +146,7 @@ const ProductDetailPage: React.FC = () => {
                     activeImage === img ? 'border-accent ring-1 ring-accent' : 'border-border hover:border-muted-foreground'
                   }`}
                 >
-                  <img src={img} alt={`${product.name} thumbnail ${idx}`} className="w-full h-full object-cover" />
+                  <img src={resolveImageUrl(img)} alt={`${product.name} thumbnail ${idx}`} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>

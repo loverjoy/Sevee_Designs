@@ -50,6 +50,14 @@ export const formatPrice = (
   })}`;
 };
 
+// Resolve relative image paths (e.g. /uploads/foo.webp) to full backend URLs
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api\/?$/, '');
+export const resolveImageUrl = (url: string | null | undefined): string => {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return `${API_BASE_URL}${url.startsWith('/') ? url : `/${url}`}`;
+};
+
 // Format date helper
 export const formatDate = (dateString: string | null | undefined): string => {
   if (!dateString) return 'N/A';

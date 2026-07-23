@@ -4,7 +4,7 @@ import { ShieldCheck, Loader2, ArrowLeft, ArrowRight, Ticket, Check, AlertCircle
 import client from '../api/client';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
-import { formatPrice } from '../lib/utils';
+import { formatPrice, resolveImageUrl } from '../lib/utils';
 import { toast } from 'sonner';
 import useSEO from '../hooks/useSEO';
 
@@ -661,7 +661,7 @@ const CheckoutPage: React.FC = () => {
                 <div key={item.product.id} className="flex justify-between items-center gap-4 text-xs font-sans">
                   <div className="flex items-center space-x-3 truncate">
                     <img
-                      src={item.product.images && item.product.images.length > 0 ? item.product.images[0] : ''}
+                      src={item.product.images && item.product.images.length > 0 ? resolveImageUrl(item.product.images[0]) : ''}
                       alt={item.product.name}
                       className="w-10 h-10 object-cover bg-secondary border border-border shrink-0"
                     />

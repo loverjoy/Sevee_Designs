@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { MessageSquare, X, Send, Bot, Package, HelpCircle, Search, Truck } from 'lucide-react';
 import client from '../api/client';
+import { resolveImageUrl } from '../lib/utils';
 
 interface ChatMessage {
   role: 'user' | 'model';
@@ -9,16 +10,6 @@ interface ChatMessage {
   products?: any[];
   order?: any;
 }
-
-const getFullImageUrl = (path: string) => {
-  if (!path) return 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=600';
-  if (path.startsWith('/uploads')) {
-    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-    const serverBase = apiBase.replace(/\/api$/, '');
-    return `${serverBase}${path}`;
-  }
-  return path;
-};
 
 const Chatbot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -292,7 +283,7 @@ const Chatbot: React.FC = () => {
                               className="group bg-card border border-border p-2 hover:border-accent transition-colors flex flex-col space-y-1.5 rounded-none"
                             >
                               <img
-                                src={getFullImageUrl(prod.images && prod.images[0])}
+                                src={resolveImageUrl(prod.images && prod.images[0])}
                                 alt={prod.name}
                                 className="w-full aspect-square object-cover"
                               />

@@ -5,7 +5,7 @@ import client from '../api/client';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
-import { formatPrice, formatDate } from '../lib/utils';
+import { formatPrice, formatDate, resolveImageUrl } from '../lib/utils';
 import { toast } from 'sonner';
 
 const US_STATES = [
@@ -591,7 +591,7 @@ const DashboardPage: React.FC = () => {
                     return (
                       <div key={prod.id} className="border border-border bg-card p-4 shadow-card flex flex-col h-full space-y-3">
                         <div className="aspect-square bg-secondary border border-border relative overflow-hidden">
-                          <img src={prod.images && prod.images.length > 0 ? prod.images[0] : ''} alt={prod.name} className="w-full h-full object-cover shadow-card" />
+                          <img src={prod.images && prod.images.length > 0 ? resolveImageUrl(prod.images[0]) : ''} alt={prod.name} className="w-full h-full object-cover shadow-card" />
                         </div>
                         <div className="flex-grow">
                           <h4 className="font-serif text-sm font-bold truncate">{prod.name}</h4>

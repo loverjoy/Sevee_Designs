@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Search, Edit3, Trash2, ToggleLeft, ToggleRight, Loader2 } from 'lucide-react';
 import client from '../../api/client';
-import { formatPrice } from '../../lib/utils';
+import { formatPrice, resolveImageUrl } from '../../lib/utils';
 import { toast } from 'sonner';
 
 const AdminProductsPage: React.FC = () => {
@@ -154,7 +154,7 @@ const AdminProductsPage: React.FC = () => {
                     <td className="p-4 font-bold text-foreground">
                       <div className="flex items-center space-x-3 min-w-0">
                         <img
-                          src={p.images && p.images.length > 0 ? p.images[0] : ''}
+                          src={p.images && p.images.length > 0 ? resolveImageUrl(p.images[0]) : ''}
                           alt={p.name}
                           className="w-10 h-10 object-cover bg-secondary border border-border shrink-0"
                         />

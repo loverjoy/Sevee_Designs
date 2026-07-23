@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart, Heart } from 'lucide-react';
 import { type Product, useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
-import { formatPrice } from '../lib/utils';
+import { formatPrice, resolveImageUrl } from '../lib/utils';
 
 interface ProductCardProps {
   product: Product;
@@ -31,7 +31,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const isOutOfStock = product.stock_quantity <= 0;
 
   // Use the first image or a placeholder
-  const imageUrl = product.images && product.images.length > 0 ? product.images[0] : 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=600';
+  const imageUrl = product.images && product.images.length > 0 ? resolveImageUrl(product.images[0]) : 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=600';
 
   return (
     <div className="group bg-card border border-border relative flex flex-col h-full shadow-card hover:shadow-hover transition-all duration-300">

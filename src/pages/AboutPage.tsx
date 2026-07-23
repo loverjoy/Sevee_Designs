@@ -33,7 +33,7 @@ const AboutPage: React.FC = () => {
         </div>
         <div className="aspect-[4/3] bg-secondary border border-border overflow-hidden shadow-card">
           <img
-            src="/logo.jpg"
+            src="https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=800"
             alt="Handcrafted Wood joinery detail"
             className="w-full h-full object-cover"
           />
@@ -96,7 +96,7 @@ const AboutPage: React.FC = () => {
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div className="aspect-[4/3] bg-secondary border border-border overflow-hidden shadow-card order-last lg:order-first">
           <img
-            src="/logo.jpg"
+            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=800"
             alt="SeVee Designs Custom interior showcase"
             className="w-full h-full object-cover"
           />

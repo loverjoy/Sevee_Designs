@@ -47,9 +47,9 @@ const HomePage: React.FC = () => {
         {/* Dark image background overlay */}
         <div className="absolute inset-0 z-0">
           <img
-            src="/logo.jpg"
-            alt="SeVee Designs"
-            className="w-full h-full object-cover opacity-20"
+            src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1600"
+            alt="SeVee Designs Luxury Living Room"
+            className="w-full h-full object-cover opacity-35"
           />
         </div>
 
@@ -222,7 +222,7 @@ const HomePage: React.FC = () => {
       <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div className="aspect-[4/3] bg-secondary border border-border overflow-hidden shadow-card">
           <img
-            src="/logo.jpg"
+            src="https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=800"
             alt="SeVee Designs Joinery Studio"
             className="w-full h-full object-cover"
           />

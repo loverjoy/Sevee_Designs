@@ -1,7 +1,8 @@
 import { Router, Request, Response } from 'express';
 import path from 'path';
+import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { query } from '../db';
 import { authenticateToken, requireAdmin, requireStaff, AuthenticatedRequest } from './auth';
 
@@ -10,26 +11,55 @@ const multer = require('multer');
 
 const router = Router();
 
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Supabase Storage (optional — falls back to local disk if not configured)
+const supabaseUrl = process.env.SUPABASE_URL || '';
+const supabaseKey = process.env.SUPABASE_ANON_KEY || '';
+const useSupabase = supabaseUrl && supabaseKey && !supabaseUrl.includes('your-project');
+let supabase: SupabaseClient | null = null;
 const BUCKET_NAME = 'product-images';
 
-// Configure Multer for memory storage (buffer for Supabase upload)
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: { fileSize: 50 * 1024 * 1024 },
-  fileFilter: (req: any, file: any, cb: any) => {
-    const filetypes = /jpeg|jpg|png|webp|gif|glb|usdz/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype) || file.originalname.endsWith('.glb') || file.originalname.endsWith('.usdz');
-    if (extname || mimetype) {
-      return cb(null, true);
-    }
-    cb(new Error('Only images (.jpg, .png, .webp, .gif) and 3D models (.glb, .usdz) are allowed!'));
-  },
-});
+if (useSupabase) {
+  supabase = createClient(supabaseUrl, supabaseKey);
+  console.log('Using Supabase Storage for uploads');
+} else {
+  console.log('Supabase not configured — using local disk for uploads');
+}
+
+// Configure Multer — memory for Supabase, disk for local fallback
+const upload = supabase
+  ? multer({
+      storage: multer.memoryStorage(),
+      limits: { fileSize: 50 * 1024 * 1024 },
+      fileFilter: (req: any, file: any, cb: any) => {
+        const filetypes = /jpeg|jpg|png|webp|gif|glb|usdz/;
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = filetypes.test(file.mimetype) || file.originalname.endsWith('.glb') || file.originalname.endsWith('.usdz');
+        if (extname || mimetype) return cb(null, true);
+        cb(new Error('Only images (.jpg, .png, .webp, .gif) and 3D models (.glb, .usdz) are allowed!'));
+      },
+    })
+  : multer({
+      storage: multer.diskStorage({
+        destination: (req: any, file: any, cb: any) => {
+          const uploadDir = path.join(__dirname, '../../uploads');
+          if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+          cb(null, uploadDir);
+        },
+        filename: (req: any, file: any, cb: any) => {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const ext = path.extname(file.originalname);
+          cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
+        },
+      }),
+      limits: { fileSize: 50 * 1024 * 1024 },
+      fileFilter: (req: any, file: any, cb: any) => {
+        const filetypes = /jpeg|jpg|png|webp|gif|glb|usdz/;
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = filetypes.test(file.mimetype) || file.originalname.endsWith('.glb') || file.originalname.endsWith('.usdz');
+        if (extname || mimetype) return cb(null, true);
+        cb(new Error('Only images (.jpg, .png, .webp, .gif) and 3D models (.glb, .usdz) are allowed!'));
+      },
+    });
 
 // Helper to generate slug from name
 const generateSlug = (name: string): string => {
@@ -427,38 +457,47 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req: Request, res:
   }
 });
 
-// POST: Upload file (Admin only) — uploads to Supabase Storage
+// POST: Upload file (Admin only) — Supabase Storage or local disk fallback
 router.post('/upload', authenticateToken, requireAdmin, upload.single('file'), async (req: Request, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    // Generate unique filename
-    const ext = path.extname(req.file.originalname);
-    const fileName = `${uuidv4()}${ext}`;
+    // Supabase Storage path
+    if (supabase && req.file.buffer) {
+      const ext = path.extname(req.file.originalname);
+      const fileName = `${uuidv4()}${ext}`;
 
-    // Upload to Supabase Storage
-    const { data, error } = await supabase.storage
-      .from(BUCKET_NAME)
-      .upload(fileName, req.file.buffer, {
-        contentType: req.file.mimetype,
-        upsert: false,
+      const { error } = await supabase.storage
+        .from(BUCKET_NAME)
+        .upload(fileName, req.file.buffer, {
+          contentType: req.file.mimetype,
+          upsert: false,
+        });
+
+      if (error) {
+        console.error('Supabase upload error:', error);
+        return res.status(500).json({ error: 'Failed to upload to storage' });
+      }
+
+      const { data: urlData } = supabase.storage
+        .from(BUCKET_NAME)
+        .getPublicUrl(fileName);
+
+      return res.status(200).json({
+        message: 'File uploaded successfully',
+        url: urlData.publicUrl,
+        mimetype: req.file.mimetype,
+        size: req.file.size,
       });
-
-    if (error) {
-      console.error('Supabase upload error:', error);
-      return res.status(500).json({ error: 'Failed to upload to storage' });
     }
 
-    // Get public URL
-    const { data: urlData } = supabase.storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(fileName);
-
+    // Local disk fallback
+    const fileUrl = `/uploads/${req.file.filename}`;
     res.status(200).json({
       message: 'File uploaded successfully',
-      url: urlData.publicUrl,
+      url: fileUrl,
       mimetype: req.file.mimetype,
       size: req.file.size,
     });

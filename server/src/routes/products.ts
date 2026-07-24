@@ -1,32 +1,26 @@
 import { Router, Request, Response } from 'express';
-import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
+import { v4 as uuidv4 } from 'uuid';
+import { createClient } from '@supabase/supabase-js';
 import { query } from '../db';
 import { authenticateToken, requireAdmin, requireStaff, AuthenticatedRequest } from './auth';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const multer = require('multer');
+
 const router = Router();
 
-// Configure Multer for local uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = path.join(__dirname, '../../uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
-  },
-});
+// Initialize Supabase client
+const supabaseUrl = process.env.SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
+const BUCKET_NAME = 'product-images';
 
+// Configure Multer for memory storage (buffer for Supabase upload)
 const upload = multer({
-  storage,
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit (for 3D models)
-  fileFilter: (req, file, cb) => {
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 50 * 1024 * 1024 },
+  fileFilter: (req: any, file: any, cb: any) => {
     const filetypes = /jpeg|jpg|png|webp|gif|glb|usdz/;
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = filetypes.test(file.mimetype) || file.originalname.endsWith('.glb') || file.originalname.endsWith('.usdz');
@@ -433,18 +427,38 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req: Request, res:
   }
 });
 
-// POST: Upload file (Admin only)
-router.post('/upload', authenticateToken, requireAdmin, upload.single('file'), (req: Request, res: Response) => {
+// POST: Upload file (Admin only) — uploads to Supabase Storage
+router.post('/upload', authenticateToken, requireAdmin, upload.single('file'), async (req: Request, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    // Return static URL format
-    const fileUrl = `/uploads/${req.file.filename}`;
+    // Generate unique filename
+    const ext = path.extname(req.file.originalname);
+    const fileName = `${uuidv4()}${ext}`;
+
+    // Upload to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .upload(fileName, req.file.buffer, {
+        contentType: req.file.mimetype,
+        upsert: false,
+      });
+
+    if (error) {
+      console.error('Supabase upload error:', error);
+      return res.status(500).json({ error: 'Failed to upload to storage' });
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from(BUCKET_NAME)
+      .getPublicUrl(fileName);
+
     res.status(200).json({
       message: 'File uploaded successfully',
-      url: fileUrl,
+      url: urlData.publicUrl,
       mimetype: req.file.mimetype,
       size: req.file.size,
     });

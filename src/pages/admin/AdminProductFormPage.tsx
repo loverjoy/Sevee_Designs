@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Loader2, Save, Trash2, Plus, Upload } from 'lucide-react';
+import { ArrowLeft, Loader2, Save, Trash2, Plus, Upload, Image } from 'lucide-react';
 import client from '../../api/client';
 import { toast } from 'sonner';
 
@@ -34,6 +34,9 @@ const AdminProductFormPage: React.FC = () => {
   const [images, setImages] = useState<string[]>([]);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingModel, setUploadingModel] = useState(false);
+  const [storedImages, setStoredImages] = useState<{ name: string; url: string }[]>([]);
+  const [showStoredImages, setShowStoredImages] = useState(false);
+  const [loadingStored, setLoadingStored] = useState(false);
 
   // Dynamic Specs state
   const [specs, setSpecs] = useState<SpecRow[]>([
@@ -123,6 +126,30 @@ const AdminProductFormPage: React.FC = () => {
 
   const handleRemoveImage = (idx: number) => {
     setImages((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  // Fetch stored images from Supabase Storage
+  const fetchStoredImages = async () => {
+    setLoadingStored(true);
+    try {
+      const res = await client.get('/products/storage/images');
+      setStoredImages(res.data);
+      setShowStoredImages(true);
+    } catch (error) {
+      console.error('Failed to load stored images:', error);
+      toast.error('Failed to load stored images');
+    } finally {
+      setLoadingStored(false);
+    }
+  };
+
+  const handleSelectStoredImage = (url: string) => {
+    if (!images.includes(url)) {
+      setImages((prev) => [...prev, url]);
+      toast.success('Image added to product');
+    } else {
+      toast.info('Image already added');
+    }
   };
 
   // Handle 3D Model Upload using local API
@@ -388,6 +415,60 @@ const AdminProductFormPage: React.FC = () => {
                         </button>
                       </div>
                     ))}
+                  </div>
+                )}
+
+                {/* Browse stored images button */}
+                <button
+                  type="button"
+                  onClick={fetchStoredImages}
+                  disabled={loadingStored}
+                  className="w-full border border-border bg-background hover:bg-secondary text-foreground py-2 px-4 text-xs font-bold uppercase tracking-wider flex items-center justify-center space-x-2 transition-colors"
+                >
+                  {loadingStored ? (
+                    <Loader2 className="animate-spin" size={14} />
+                  ) : (
+                    <Image size={14} />
+                  )}
+                  <span>{loadingStored ? 'Loading...' : 'Browse Stored Images'}</span>
+                </button>
+
+                {/* Stored images selector modal */}
+                {showStoredImages && (
+                  <div className="border border-border bg-background p-4 space-y-3 max-h-64 overflow-y-auto">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Select from storage ({storedImages.length} images)</span>
+                      <button
+                        type="button"
+                        onClick={() => setShowStoredImages(false)}
+                        className="text-xs text-muted-foreground hover:text-foreground"
+                      >
+                        Close
+                      </button>
+                    </div>
+                    {storedImages.length === 0 ? (
+                      <p className="text-xs text-muted-foreground">No images in storage yet.</p>
+                    ) : (
+                      <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                        {storedImages.map((img) => (
+                          <button
+                            key={img.name}
+                            type="button"
+                            onClick={() => handleSelectStoredImage(img.url)}
+                            className={`aspect-square bg-secondary border overflow-hidden relative group transition-all ${
+                              images.includes(img.url) ? 'border-accent ring-1 ring-accent' : 'border-border hover:border-muted-foreground'
+                            }`}
+                          >
+                            <img src={img.url} alt={img.name} className="w-full h-full object-cover" />
+                            {images.includes(img.url) && (
+                              <div className="absolute inset-0 bg-accent/20 flex items-center justify-center">
+                                <span className="text-[10px] font-bold text-accent">Added</span>
+                              </div>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

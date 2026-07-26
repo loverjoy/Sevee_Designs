@@ -13,7 +13,7 @@ const router = Router();
 
 // Supabase Storage (optional — falls back to local disk if not configured)
 const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_ANON_KEY || '';
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || '';
 const useSupabase = supabaseUrl && supabaseKey && !supabaseUrl.includes('your-project');
 let supabase: SupabaseClient | null = null;
 const BUCKET_NAME = 'product-images';
@@ -454,6 +454,38 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req: Request, res:
   } catch (error) {
     console.error('Delete product error:', error);
     res.status(500).json({ error: 'Failed to delete product' });
+  }
+});
+
+// GET: List all images from Supabase Storage (Admin only)
+router.get('/storage/images', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
+  try {
+    if (!supabase) {
+      return res.status(400).json({ error: 'Supabase Storage not configured' });
+    }
+
+    const { data, error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .list('', { limit: 100, sortBy: { column: 'created_at', order: 'desc' } });
+
+    if (error) {
+      console.error('Supabase list error:', error);
+      return res.status(500).json({ error: 'Failed to list storage images' });
+    }
+
+    const images = (data || [])
+      .filter(f => /\.(jpg|jpeg|png|webp|gif)$/i.test(f.name))
+      .map(f => {
+        const { data: urlData } = supabase!.storage
+          .from(BUCKET_NAME)
+          .getPublicUrl(f.name);
+        return { name: f.name, url: urlData.publicUrl, created: f.created_at };
+      });
+
+    res.json(images);
+  } catch (error: any) {
+    console.error('List storage images error:', error);
+    res.status(500).json({ error: 'Failed to list images' });
   }
 });
 

@@ -232,8 +232,8 @@ router.get('/id/:id', async (req: Request, res: Response) => {
 router.post('/', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
   const { category_id, name, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url, item_code } = req.body;
 
-  if (!name || !price || stock_quantity === undefined) {
-    return res.status(400).json({ error: 'Name, price, and stock quantity are required' });
+  if (!name || stock_quantity === undefined) {
+    return res.status(400).json({ error: 'Name and stock quantity are required' });
   }
 
   const slug = generateSlug(name);

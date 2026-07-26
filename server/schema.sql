@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS public.products (
   slug            text UNIQUE NOT NULL,
   item_code       text UNIQUE,
   description     text,
-  price           numeric(10,2) NOT NULL,
+  price           numeric(10,2),
   sale_price      numeric(10,2),
   stock_quantity  int NOT NULL DEFAULT 0,
   images          text[] DEFAULT '{}',

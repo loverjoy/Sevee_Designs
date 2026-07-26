@@ -156,8 +156,8 @@ const AdminProductFormPage: React.FC = () => {
   // Handle form save submit
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !price || !stockQuantity) {
-      toast.error('Name, price, and stock levels are required');
+    if (!name || !stockQuantity) {
+      toast.error('Name and stock levels are required');
       return;
     }
 
@@ -176,7 +176,7 @@ const AdminProductFormPage: React.FC = () => {
       name,
       item_code: itemCode || null,
       description,
-      price: parseFloat(price),
+      price: price ? parseFloat(price) : null,
       sale_price: salePrice ? parseFloat(salePrice) : null,
       stock_quantity: parseInt(stockQuantity, 10),
       images,
@@ -287,13 +287,12 @@ const AdminProductFormPage: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="flex flex-col space-y-1.5">
-                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Price (GHS) *</label>
+                <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Price (GHS, Optional)</label>
                 <input
                   type="number"
                   step="0.01"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  required
                   placeholder="E.g. 1500"
                   className="border border-border bg-background p-2.5 text-xs outline-none focus:border-accent"
                 />

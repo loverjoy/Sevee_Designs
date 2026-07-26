@@ -22,7 +22,7 @@ async function assignImages() {
 
     const imageFiles = fs.readdirSync(imagesDir)
       .filter(f => /\.(jpg|jpeg|png|webp|gif)$/i.test(f))
-      .map(f => `/images/products/${f}`);
+      .map(f => `/uploads/${f}`);
 
     console.log(`Found ${imageFiles.length} images in images_website/`);
 
@@ -76,7 +76,24 @@ async function assignImages() {
       updated++;
     }
 
-    console.log(`\nDone: ${updated} products updated with images`);
+    // 5. Fix existing images with wrong /images/products/ paths -> /uploads/
+    const fixRes = await client.query(
+      `SELECT id, name, images FROM public.products WHERE images::text LIKE '%/images/products/%'`
+    );
+    let fixed = 0;
+    for (const row of fixRes.rows) {
+      const fixedImages = row.images.map((img: string) =>
+        img.replace('/images/products/', '/uploads/')
+      );
+      await client.query(
+        'UPDATE public.products SET images = $1 WHERE id = $2',
+        [fixedImages, row.id]
+      );
+      console.log(`Fixed "${row.name}": ${fixedImages.join(', ')}`);
+      fixed++;
+    }
+
+    console.log(`\nDone: ${updated} products updated, ${fixed} products fixed with correct paths`);
   } catch (error) {
     console.error('Failed:', error);
   } finally {

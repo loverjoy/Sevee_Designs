@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ShoppingCart, Heart, ArrowLeft, Rotate3d, QrCode, X, Check } from 'lucide-react';
+import { ShoppingCart, Heart, ArrowLeft, Rotate3d, Check } from 'lucide-react';
 import client from '../api/client';
 import { useCart, type Product } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
@@ -24,8 +24,6 @@ const ProductDetailPage: React.FC = () => {
   const [activeImage, setActiveImage] = useState<string>('');
   const [quantity, setQuantity] = useState<number>(1);
   const [loading, setLoading] = useState(true);
-  
-  const [arModalOpen, setArModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -57,29 +55,6 @@ const ProductDetailPage: React.FC = () => {
       await removeFromWishlist(product.id);
     } else {
       await addToWishlist(product);
-    }
-  };
-
-  const trackArClick = async () => {
-    if (!product) return;
-    try {
-      await client.post(`/products/${product.id}/ar-click`);
-    } catch (e) {
-      console.error('Failed to track AR view', e);
-    }
-  };
-
-  const handleOpenAR = () => {
-    trackArClick();
-    // Desktop QR fallback: check if mobile device
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    if (!isMobile) {
-      setArModalOpen(true);
-    } else {
-      // Direct WebXR redirect if supported on mobile
-      if (product?.model_url) {
-        window.location.href = product.model_url;
-      }
     }
   };
 
@@ -203,25 +178,19 @@ const ProductDetailPage: React.FC = () => {
             {product.description || 'No description available for this handcrafted hardwood furniture piece.'}
           </p>
 
-          {/* AR Activation Poster Option */}
-          {product.model_url && (
-            <div className="border border-accent/20 bg-accent/5 p-4 flex items-center justify-between shadow-card">
-              <div className="flex items-center space-x-3">
-                <Rotate3d className="text-accent shrink-0" size={24} />
-                <div>
-                  <h4 className="font-serif text-sm font-bold">Augmented Reality Enabled</h4>
-                  <p className="text-[10px] text-muted-foreground font-sans">Project this furniture directly onto your floor.</p>
-                </div>
+          {/* AR Activation - Under Construction */}
+          <div className="border border-accent/20 bg-accent/5 p-4 flex items-center justify-between shadow-card">
+            <div className="flex items-center space-x-3">
+              <Rotate3d className="text-accent shrink-0" size={24} />
+              <div>
+                <h4 className="font-serif text-sm font-bold">Augmented Reality - Coming Soon</h4>
+                <p className="text-[10px] text-muted-foreground font-sans">Project this furniture directly onto your floor. Feature launching soon.</p>
               </div>
-              <button
-                onClick={handleOpenAR}
-                className="bg-accent hover:bg-accent/90 text-accent-foreground text-[10px] font-sans font-bold uppercase px-4 py-2 tracking-wider inline-flex items-center space-x-1"
-              >
-                <QrCode size={12} />
-                <span>View in AR</span>
-              </button>
             </div>
-          )}
+            <span className="text-accent text-[10px] font-sans font-bold uppercase px-4 py-2 tracking-wider border border-accent/30">
+              Under Construction
+            </span>
+          </div>
 
           {/* Purchase Actions */}
           <div className="pt-4 border-t border-border space-y-4">
@@ -287,36 +256,8 @@ const ProductDetailPage: React.FC = () => {
         )}
       </section>
 
-      {/* Desktop AR QR Code Overlay Modal */}
-      {arModalOpen && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">
-          <div className="bg-card border border-border max-w-sm w-full p-8 shadow-card relative text-center space-y-6 font-sans">
-            <button
-              onClick={() => setArModalOpen(false)}
-              className="absolute top-4 right-4 text-muted-foreground hover:text-foreground p-1"
-            >
-              <X size={20} />
-            </button>
-            <Rotate3d className="text-accent mx-auto" size={36} />
-            <div>
-              <h3 className="font-serif text-lg font-bold">Scan to View in AR</h3>
-              <p className="text-xs text-muted-foreground mt-1">
-                Scan the QR code with your mobile camera to project this item onto your floor.
-              </p>
-            </div>
-            <div className="bg-white p-4 border border-border inline-block mx-auto shadow-card">
-              <img
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(window.location.href)}`}
-                alt="AR QR Code"
-                className="w-48 h-48 mx-auto"
-              />
-            </div>
-            <p className="text-[10px] text-muted-foreground">
-              Works on WebXR-compatible Android devices and iOS 12+ Safari.
-            </p>
-          </div>
-        </div>
-      )}
+      {/* Desktop AR QR Code Overlay Modal - Disabled */}
+      {/* Feature under construction */}
     </div>
   );
 };

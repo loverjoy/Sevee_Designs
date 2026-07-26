@@ -34,7 +34,8 @@ const getDeliveryFee = async (region: string, country?: string): Promise<number>
       if (res.rows.length > 0) {
         return parseFloat(res.rows[0].base_fee);
       }
-      return 450.00; // Fallback
+      console.error('International delivery zone not configured in database');
+      return -1;
     }
 
     const res = await query(

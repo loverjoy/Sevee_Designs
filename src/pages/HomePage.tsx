@@ -4,7 +4,7 @@ import { ArrowRight, Compass, ShieldCheck, Heart, Sparkles } from 'lucide-react'
 import client from '../api/client';
 import ProductCard from '../components/ProductCard';
 import type { Product } from '../contexts/CartContext';
-import { formatPrice, resolveImageUrl } from '../lib/utils';
+import { resolveImageUrl } from '../lib/utils';
 import useSEO from '../hooks/useSEO';
 
 const HomePage: React.FC = () => {
@@ -15,7 +15,6 @@ const HomePage: React.FC = () => {
   });
 
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-  const [arProducts, setArProducts] = useState<Product[]>([]);
   const [blogs, setBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -24,9 +23,6 @@ const HomePage: React.FC = () => {
       try {
         const featuredRes = await client.get('/products/featured');
         setFeaturedProducts(featuredRes.data);
-
-        const arRes = await client.get('/products/ar-enabled');
-        setArProducts(arRes.data);
 
         const blogRes = await client.get('/content/blogs');
         setBlogs(blogRes.data.slice(0, 3));
@@ -159,61 +155,20 @@ const HomePage: React.FC = () => {
         )}
       </section>
 
-      {/* 4. AR Augmented Reality Highlight Section */}
+      {/* 4. AR Augmented Reality - Under Construction */}
       <section className="bg-secondary/40 border-y border-border py-16">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
-          <div className="space-y-4">
-            <span className="text-accent text-[10px] font-sans font-bold uppercase tracking-widest">
-              Interactive Shopping
-            </span>
-            <h2 className="text-3xl font-serif font-bold leading-tight">
-              Visualize furniture in your room with 3D & AR
-            </h2>
-            <p className="font-sans text-xs text-muted-foreground leading-relaxed">
-              No guesswork required. Using our web-based Augmented Reality tool, project high-fidelity models of our dining tables and beds directly onto your floors. Perfect scaling matches Accra standards.
-            </p>
-            <div className="pt-2">
-              <Link
-                to="/shop?ar=true"
-                className="bg-primary hover:bg-accent text-primary-foreground px-6 py-3 text-xs font-sans font-bold uppercase tracking-wider inline-block transition-colors"
-              >
-                Browse AR models
-              </Link>
-            </div>
-          </div>
-
-          {/* AR Products Slider/Scroll */}
-          <div className="lg:col-span-2 overflow-x-auto flex space-x-6 pb-4 scrollbar-thin scrollbar-thumb-border">
-            {loading ? (
-              <div className="w-60 h-72 bg-secondary animate-pulse"></div>
-            ) : arProducts.length === 0 ? (
-              <p className="text-muted-foreground font-sans text-xs">No AR products configured.</p>
-            ) : (
-              arProducts.map((product) => (
-                <div key={product.id} className="min-w-[240px] max-w-[240px] bg-card border border-border p-4 space-y-3 shadow-card shrink-0 hover:shadow-hover transition-all">
-                  <div className="relative aspect-square overflow-hidden bg-secondary">
-                    <img
-                      src={product.images && product.images.length > 0 ? resolveImageUrl(product.images[0]) : ''}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <span className="absolute top-2 right-2 bg-primary/80 backdrop-blur-md text-primary-foreground text-[8px] font-sans font-bold uppercase px-2 py-0.5 tracking-wider">
-                      3D Model
-                    </span>
-                  </div>
-                  <div>
-                    <h4 className="font-serif text-sm font-bold truncate">{product.name}</h4>
-                    <span className="font-sans text-xs font-semibold text-accent block mt-1">{formatPrice(product.sale_price ?? product.price)}</span>
-                  </div>
-                  <Link
-                    to={`/product/${product.slug}`}
-                    className="w-full text-center bg-secondary hover:bg-accent hover:text-accent-foreground text-foreground text-[10px] font-sans font-bold uppercase py-2 tracking-wider block transition-colors border border-border"
-                  >
-                    View in 3D
-                  </Link>
-                </div>
-              ))
-            )}
+        <div className="max-w-7xl mx-auto px-6 text-center space-y-6">
+          <span className="text-accent text-[10px] font-sans font-bold uppercase tracking-widest">
+            Coming Soon
+          </span>
+          <h2 className="text-3xl font-serif font-bold leading-tight">
+            3D & Augmented Reality
+          </h2>
+          <p className="font-sans text-xs text-muted-foreground leading-relaxed max-w-xl mx-auto">
+            Visualize furniture in your room before you buy. Our 3D AR viewer is currently under construction and will launch soon.
+          </p>
+          <div className="inline-flex items-center space-x-2 bg-accent/10 border border-accent/20 px-4 py-2">
+            <span className="text-accent text-[10px] font-sans font-bold uppercase tracking-wider">Under Construction</span>
           </div>
         </div>
       </section>

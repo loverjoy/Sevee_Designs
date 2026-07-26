@@ -166,8 +166,7 @@ const CheckoutPage: React.FC = () => {
           if (matchedZone) {
             setDeliveryFee(parseFloat(matchedZone.base_fee));
           } else {
-            // Fallback base fee if database zone missing
-            setDeliveryFee(450.00);
+            setFeeError('International delivery zone is not configured. Please contact support.');
           }
         } else {
           // Find zone that contains selected region

@@ -75,16 +75,7 @@ const Header: React.FC = () => {
             : 'bg-background/80 backdrop-blur-md'
         }`}
       >
-        {/* Announcement Bar */}
-        <div
-          className={`w-full bg-primary text-primary-foreground text-center text-xs tracking-wider uppercase font-sans transition-all duration-300 origin-top overflow-hidden ${
-            scrolled
-              ? 'max-h-0 py-0 opacity-0'
-              : 'max-h-12 py-2 px-4 opacity-100'
-          }`}
-        >
-          Free delivery inside Accra on orders above GHS 1,000.00
-        </div>
+
 
         <div
           className={`max-w-7xl mx-auto px-6 flex items-center justify-between transition-all duration-300 ${

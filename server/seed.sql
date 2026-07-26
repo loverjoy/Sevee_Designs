@@ -67,8 +67,8 @@ VALUES
     'deluxe-oak-dining-table', 
     'SV-OAK-1001',
     'A solid oak wood dining table crafted with precision. Seats up to 8 people comfortably. Features a matte oil finish to protect and highlight the natural wood grain.', 
-    3500.00, 
-    3200.00, 
+    null, 
+    null, 
     12, 
     ARRAY['/uploads/prod_dining_table_1.webp', '/uploads/prod_dining_table_2.webp'], 
     '{"Material": "Solid White Oak", "Dimensions": "180cm x 90cm x 75cm", "Finish": "Natural Matte Oil", "Weight": "45kg"}', 
@@ -87,7 +87,7 @@ VALUES
     'velvet-lounge-chair', 
     'SV-VEL-1002',
     'An accent chair upholstered in premium velvet fabric with elegant brass legs. Perfect for reading corners or adding a sophisticated touch to your living room.', 
-    1800.00, 
+    null, 
     null, 
     18, 
     ARRAY['/uploads/prod_velvet_chair.webp'], 
@@ -107,8 +107,8 @@ VALUES
     'ergonomic-task-chair', 
     'SV-ERG-1003',
     'High-back executive office chair with adjustable lumbar support, 3D armrests, and dynamic mesh backing to ensure posture support during long working hours.', 
-    1200.00, 
-    999.00, 
+    null, 
+    null, 
     25, 
     ARRAY['/uploads/prod_office_chair.webp'], 
     '{"Material": "Nylon Mesh, Aluminum", "Dimensions": "65cm x 65cm x 110-120cm", "Adjustable Lumbar": "Yes", "Warranty": "2 Years"}', 
@@ -127,32 +127,12 @@ VALUES
     'teak-sun-lounger', 
     'SV-TEK-1004',
     'Premium grade A teak wood lounge chair designed for outdoor relaxation. Naturally weather-resistant, features 4 reclining positions and built-in wheels.', 
-    2500.00, 
+    null, 
     null, 
     8, 
     ARRAY['/uploads/prod_sun_lounger.webp'], 
     '{"Material": "Grade A Teak Wood", "Dimensions": "200cm x 65cm x 35cm", "Weather Resistant": "Yes", "Wheels Included": "Yes"}', 
     true, 
-    true, 
-    null
-  )
-  ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO public.products (id, category_id, name, slug, item_code, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
-VALUES
-  (
-    'f1000000-0000-0000-0000-000000000005', 
-    'c1000000-0000-0000-0000-000000000005', 
-    'Minimalist Wall Clock', 
-    'minimalist-wall-clock', 
-    'SV-CLK-1005',
-    'Modern silently sweep-second clock with a black steel frame and natural wood hands. A timeless decor accent piece for any room.', 
-    450.00, 
-    380.00, 
-    40, 
-    ARRAY['/uploads/prod_wall_clock.webp'], 
-    '{"Material": "Steel Frame, Oak Hands", "Dimensions": "30cm Diameter", "Movement": "Silent Quartz", "Battery": "1x AA (Not Included)"}', 
-    false, 
     true, 
     null
   )
@@ -167,7 +147,7 @@ VALUES
     'queen-platform-bed-frame', 
     'SV-BED-1006',
     'Low-profile queen size platform bed frame made of solid mahogany wood. Strong slats eliminate the need for a box spring.', 
-    4200.00, 
+    null, 
     null, 
     6, 
     ARRAY['/uploads/prod_queen_bed.webp'], 
@@ -181,14 +161,34 @@ VALUES
 INSERT INTO public.products (id, category_id, name, slug, item_code, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
 VALUES
   (
+    'f1000000-0000-0000-0000-000000000005', 
+    'c1000000-0000-0000-0000-000000000005', 
+    'Minimalist Wall Clock', 
+    'minimalist-wall-clock', 
+    'SV-CLK-1005',
+    'Modern silently sweep-second clock with a black steel frame and natural wood hands. A timeless decor accent piece for any room.', 
+    null, 
+    null, 
+    40, 
+    ARRAY['/uploads/prod_wall_clock.webp'], 
+    '{"Material": "Steel Frame, Oak Hands", "Dimensions": "30cm Diameter", "Movement": "Silent Quartz", "Battery": "1x AA (Not Included)"}', 
+    false, 
+    true, 
+    null
+  )
+  ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO public.products (id, category_id, name, slug, item_code, description, price, sale_price, stock_quantity, images, specifications, is_featured, is_active, model_url)
+VALUES
+  (
     'f1000000-0000-0000-0000-000000000007', 
     'c1000000-0000-0000-0000-000000000001', 
     'Mid-Century Credenza', 
     'mid-century-credenza', 
     'SV-CRD-1007',
     'Walnut wood side cabinet featuring 3 drawers and 2 sliding doors. Spacious interior shelving for media devices or dinnerware.', 
-    2900.00, 
-    2650.00, 
+    null, 
+    null, 
     10, 
     ARRAY['/uploads/prod_credenza.webp'], 
     '{"Material": "Walnut Veneer, Solid Ash Legs", "Dimensions": "150cm x 45cm x 75cm", "Drawers": "3 Soft-close", "Shelves": "Adjustable"}', 
@@ -207,7 +207,7 @@ VALUES
     'industrial-floor-lamp', 
     'SV-LMP-1008',
     'Adjustable arc light fixture with a heavy concrete base and powder-coated matte black steel shade. Ideal for lighting reading armchairs.', 
-    850.00, 
+    null, 
     null, 
     15, 
     ARRAY['/uploads/prod_floor_lamp.webp'], 

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart, Heart } from 'lucide-react';
 import { type Product, useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
-import { formatPrice, resolveImageUrl } from '../lib/utils';
+import { resolveImageUrl } from '../lib/utils';
 
 interface ProductCardProps {
   product: Product;
@@ -25,9 +25,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     }
   };
   
-  const hasSale = product.sale_price !== null && product.sale_price !== undefined;
-  const originalPrice = parseFloat(product.price as string);
-  const displayPrice = hasSale ? parseFloat(product.sale_price as string) : originalPrice;
   const isOutOfStock = product.stock_quantity <= 0;
 
   // Use the first image or a placeholder
@@ -45,13 +42,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
           />
         </Link>
-
-        {/* Sale Badge */}
-        {hasSale && (
-          <span className="absolute top-3 left-3 bg-accent text-accent-foreground text-[10px] tracking-wider uppercase font-bold px-2 py-1 z-10">
-            Sale
-          </span>
-        )}
 
         {/* Favourites Toggle */}
         <button
@@ -96,18 +86,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               {product.name}
             </h4>
           </Link>
-        </div>
-        
-        {/* Prices */}
-        <div className="mt-2 flex items-baseline space-x-2 font-sans font-semibold text-sm">
-          {hasSale ? (
-            <>
-              <span className="text-accent">{formatPrice(displayPrice)}</span>
-              <span className="text-muted-foreground line-through text-xs">{formatPrice(originalPrice)}</span>
-            </>
-          ) : (
-            <span className="text-foreground">{formatPrice(displayPrice)}</span>
-          )}
         </div>
       </div>
     </div>

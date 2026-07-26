@@ -4,7 +4,7 @@ import { ShoppingCart, Heart, ArrowLeft, Rotate3d, Check } from 'lucide-react';
 import client from '../api/client';
 import { useCart, type Product } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
-import { formatPrice, resolveImageUrl } from '../lib/utils';
+import { resolveImageUrl } from '../lib/utils';
 import { useAuth } from '../contexts/AuthContext';
 import useSEO from '../hooks/useSEO';
 
@@ -81,8 +81,6 @@ const ProductDetailPage: React.FC = () => {
 
   const isOutOfStock = product.stock_quantity <= 0;
   const isLowStock = product.stock_quantity > 0 && product.stock_quantity < 5;
-  const originalPrice = parseFloat(product.price as string);
-  const salePrice = product.sale_price ? parseFloat(product.sale_price as string) : null;
 
   return (
     <div className="pt-32 max-w-7xl mx-auto px-6 space-y-16 min-h-screen">
@@ -103,11 +101,6 @@ const ProductDetailPage: React.FC = () => {
               alt={product.name}
               className="w-full h-full object-cover object-center"
             />
-            {salePrice && (
-              <span className="absolute top-4 left-4 bg-accent text-accent-foreground text-xs font-bold px-3 py-1 uppercase tracking-wider">
-                Sale
-              </span>
-            )}
           </div>
 
           {/* Thumbnail row */}
@@ -141,18 +134,6 @@ const ProductDetailPage: React.FC = () => {
               )}
             </span>
             <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground">{product.name}</h1>
-          </div>
-
-          {/* Price Tag */}
-          <div className="flex items-baseline space-x-3 font-sans">
-            {salePrice ? (
-              <>
-                <span className="text-2xl font-bold text-accent">{formatPrice(salePrice)}</span>
-                <span className="text-base text-muted-foreground line-through">{formatPrice(originalPrice)}</span>
-              </>
-            ) : (
-              <span className="text-2xl font-bold text-foreground">{formatPrice(originalPrice)}</span>
-            )}
           </div>
 
           {/* Stock Indicator */}

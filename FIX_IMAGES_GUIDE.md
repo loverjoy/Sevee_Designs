@@ -1,3 +1,4 @@
+
 # Fix Broken Images — Push Local Images to Supabase Storage
 
 ## Why Images Are Broken
@@ -14,9 +15,9 @@ Your product images are stored locally on the Render server's disk (`server/uplo
 
 ## Prerequisites
 
-- Access to your Supabase dashboard: https://supabase.com/dashboard
+- Access to your Supabase dashboard: <https://supabase.com/dashboard>
 - Your Supabase project ID: `xpeyqmbedczzgnanlnvq`
-- Access to Render dashboard: https://dashboard.render.com
+- Access to Render dashboard: <https://dashboard.render.com>
 - Node.js installed locally
 - The `images_website/` folder with all 58 product images (already in your repo)
 
@@ -24,7 +25,7 @@ Your product images are stored locally on the Render server's disk (`server/uplo
 
 ## Step 1: Create the Supabase Storage Bucket
 
-1. Go to https://supabase.com/dashboard
+1. Go to <https://supabase.com/dashboard>
 2. Select your project (`xpeyqmbedczzgnanlnvq`)
 3. Click **Storage** in the left sidebar
 4. Click **"New bucket"** button
@@ -64,7 +65,7 @@ SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs...your-real-anon-key...
 
 ### 3.2 Update Render Environment Variables (production)
 
-1. Go to https://dashboard.render.com
+1. Go to <https://dashboard.render.com>
 2. Select your backend service (`sevee-designs1`)
 3. Go to **Environment** tab
 4. Add or update these two variables:
@@ -86,6 +87,7 @@ npm install @supabase/supabase-js
 ## Step 5: Run the Migration Script
 
 This script will:
+
 1. Read all 58 images from `images_website/`
 2. Upload each to Supabase Storage
 3. Update all database records to point to the new Supabase CDN URLs
@@ -139,13 +141,13 @@ All image values should start with `https://` (Supabase CDN URLs), not `/uploads
 
 ### 6.3 Test the Website
 
-1. Go to https://seveedesigns.com/shop
+1. Go to <https://seveedesigns.com/shop>
 2. Product images should now load correctly
 3. Images should load faster (served from Supabase CDN)
 
 ### 6.4 Test New Uploads via Admin
 
-1. Go to https://seveedesigns.com/admin/products/new
+1. Go to <https://seveedesigns.com/admin/products/new>
 2. Upload a test image
 3. Save the product
 4. Verify the image appears on the shop page

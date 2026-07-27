@@ -429,7 +429,7 @@ const AdminProductFormPage: React.FC = () => {
                 {/* Browse stored images button */}
                 <button
                   type="button"
-                  onClick={fetchStoredImages}
+                  onClick={() => fetchStoredImages()}
                   disabled={loadingStored}
                   className="w-full border border-border bg-background hover:bg-secondary text-foreground py-2 px-4 text-xs font-bold uppercase tracking-wider flex items-center justify-center space-x-2 transition-colors"
                 >

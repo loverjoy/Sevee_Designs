@@ -346,6 +346,39 @@ router.delete('/wishlist/:productId', authenticateToken, async (req: any, res: R
   }
 });
 
+// GET: List all images from Supabase Storage (Admin only)
+router.get('/storage/images', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
+  console.log('[STORAGE] Request received, user:', req.user);
+  try {
+    if (!supabase) {
+      return res.status(400).json({ error: 'Supabase Storage not configured' });
+    }
+
+    const { data, error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .list('', { limit: 100, sortBy: { column: 'created_at', order: 'desc' } });
+
+    if (error) {
+      console.error('Supabase list error:', error);
+      return res.status(500).json({ error: 'Failed to list storage images' });
+    }
+
+    const images = (data || [])
+      .filter(f => /\.(jpg|jpeg|png|webp|gif)$/i.test(f.name))
+      .map(f => {
+        const { data: urlData } = supabase!.storage
+          .from(BUCKET_NAME)
+          .getPublicUrl(f.name);
+        return { name: f.name, url: urlData.publicUrl, created: f.created_at };
+      });
+
+    res.json(images);
+  } catch (error: any) {
+    console.error('List storage images error:', error);
+    res.status(500).json({ error: 'Failed to list images' });
+  }
+});
+
 // PUT: Update product (Admin only)
 router.put('/:id', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -454,38 +487,6 @@ router.delete('/:id', authenticateToken, requireAdmin, async (req: Request, res:
   } catch (error) {
     console.error('Delete product error:', error);
     res.status(500).json({ error: 'Failed to delete product' });
-  }
-});
-
-// GET: List all images from Supabase Storage (Admin only)
-router.get('/storage/images', authenticateToken, requireAdmin, async (req: Request, res: Response) => {
-  try {
-    if (!supabase) {
-      return res.status(400).json({ error: 'Supabase Storage not configured' });
-    }
-
-    const { data, error } = await supabase.storage
-      .from(BUCKET_NAME)
-      .list('', { limit: 100, sortBy: { column: 'created_at', order: 'desc' } });
-
-    if (error) {
-      console.error('Supabase list error:', error);
-      return res.status(500).json({ error: 'Failed to list storage images' });
-    }
-
-    const images = (data || [])
-      .filter(f => /\.(jpg|jpeg|png|webp|gif)$/i.test(f.name))
-      .map(f => {
-        const { data: urlData } = supabase!.storage
-          .from(BUCKET_NAME)
-          .getPublicUrl(f.name);
-        return { name: f.name, url: urlData.publicUrl, created: f.created_at };
-      });
-
-    res.json(images);
-  } catch (error: any) {
-    console.error('List storage images error:', error);
-    res.status(500).json({ error: 'Failed to list images' });
   }
 });
 

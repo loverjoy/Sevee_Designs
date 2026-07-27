@@ -396,12 +396,23 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: Request, res: Re
       params.push(name || null);
       fieldsToUpdate.push(`name = $${params.length}`);
       
-      const slug = generateSlug(name);
+      let slug = generateSlug(name);
+      const slugDup = await query('SELECT id FROM public.products WHERE slug = $1 AND id != $2', [slug, id]);
+      if (slugDup.rows.length > 0) {
+        slug = `${slug}-${Date.now().toString(36)}`;
+      }
       params.push(slug);
       fieldsToUpdate.push(`slug = $${params.length}`);
     }
     if (item_code !== undefined) {
-      params.push(item_code ? item_code.trim().toUpperCase() : null);
+      const cleanCode = item_code ? item_code.trim().toUpperCase() : null;
+      if (cleanCode) {
+        const dupCheck = await query('SELECT id FROM public.products WHERE item_code = $1 AND id != $2', [cleanCode, id]);
+        if (dupCheck.rows.length > 0) {
+          return res.status(400).json({ error: `Item code "${cleanCode}" is already used by another product` });
+        }
+      }
+      params.push(cleanCode);
       fieldsToUpdate.push(`item_code = $${params.length}`);
     }
     if (description !== undefined) {

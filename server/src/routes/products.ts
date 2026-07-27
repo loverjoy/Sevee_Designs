@@ -355,7 +355,7 @@ router.get('/storage/images', authenticateToken, requireAdmin, async (req: Reque
     }
 
     const page = parseInt(req.query.page as string) || 1;
-    const perPage = parseInt(req.query.limit as string) || 200;
+    const perPage = parseInt(req.query.limit as string) || 500;
     const offset = (page - 1) * perPage;
 
     const { data, error } = await supabase.storage

@@ -37,6 +37,8 @@ const AdminProductFormPage: React.FC = () => {
   const [storedImages, setStoredImages] = useState<{ name: string; url: string }[]>([]);
   const [showStoredImages, setShowStoredImages] = useState(false);
   const [loadingStored, setLoadingStored] = useState(false);
+  const [storedImagesPage, setStoredImagesPage] = useState(1);
+  const [hasMoreImages, setHasMoreImages] = useState(false);
 
   // Dynamic Specs state
   const [specs, setSpecs] = useState<SpecRow[]>([
@@ -129,11 +131,17 @@ const AdminProductFormPage: React.FC = () => {
   };
 
   // Fetch stored images from Supabase Storage
-  const fetchStoredImages = async () => {
+  const fetchStoredImages = async (page = 1) => {
     setLoadingStored(true);
     try {
-      const res = await client.get('/products/storage/images');
-      setStoredImages(res.data);
+      const res = await client.get(`/products/storage/images?page=${page}&limit=500`);
+      if (page === 1) {
+        setStoredImages(res.data);
+      } else {
+        setStoredImages((prev) => [...prev, ...res.data]);
+      }
+      setStoredImagesPage(page);
+      setHasMoreImages(res.data.length === 500);
       setShowStoredImages(true);
     } catch (error) {
       console.error('Failed to load stored images:', error);
@@ -449,25 +457,38 @@ const AdminProductFormPage: React.FC = () => {
                     {storedImages.length === 0 ? (
                       <p className="text-xs text-muted-foreground">No images in storage yet.</p>
                     ) : (
-                      <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                        {storedImages.map((img) => (
+                      <>
+                        <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+                          {storedImages.map((img) => (
+                            <button
+                              key={img.name}
+                              type="button"
+                              onClick={() => handleSelectStoredImage(img.url)}
+                              className={`aspect-square bg-secondary border overflow-hidden relative group transition-all ${
+                                images.includes(img.url) ? 'border-accent ring-1 ring-accent' : 'border-border hover:border-muted-foreground'
+                              }`}
+                            >
+                              <img src={img.url} alt={img.name} className="w-full h-full object-cover" />
+                              {images.includes(img.url) && (
+                                <div className="absolute inset-0 bg-accent/20 flex items-center justify-center">
+                                  <span className="text-[10px] font-bold text-accent">Added</span>
+                                </div>
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                        {hasMoreImages && (
                           <button
-                            key={img.name}
                             type="button"
-                            onClick={() => handleSelectStoredImage(img.url)}
-                            className={`aspect-square bg-secondary border overflow-hidden relative group transition-all ${
-                              images.includes(img.url) ? 'border-accent ring-1 ring-accent' : 'border-border hover:border-muted-foreground'
-                            }`}
+                            onClick={() => fetchStoredImages(storedImagesPage + 1)}
+                            disabled={loadingStored}
+                            className="w-full border border-border bg-background hover:bg-secondary text-foreground py-2 px-4 text-xs font-bold uppercase tracking-wider flex items-center justify-center space-x-2 transition-colors"
                           >
-                            <img src={img.url} alt={img.name} className="w-full h-full object-cover" />
-                            {images.includes(img.url) && (
-                              <div className="absolute inset-0 bg-accent/20 flex items-center justify-center">
-                                <span className="text-[10px] font-bold text-accent">Added</span>
-                              </div>
-                            )}
+                            {loadingStored ? <Loader2 className="animate-spin" size={14} /> : <Plus size={14} />}
+                            <span>{loadingStored ? 'Loading...' : 'Load More Images'}</span>
                           </button>
-                        ))}
-                      </div>
+                        )}
+                      </>
                     )}
                   </div>
                 )}

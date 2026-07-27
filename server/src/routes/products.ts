@@ -354,9 +354,13 @@ router.get('/storage/images', authenticateToken, requireAdmin, async (req: Reque
       return res.status(400).json({ error: 'Supabase Storage not configured' });
     }
 
+    const page = parseInt(req.query.page as string) || 1;
+    const perPage = parseInt(req.query.limit as string) || 200;
+    const offset = (page - 1) * perPage;
+
     const { data, error } = await supabase.storage
       .from(BUCKET_NAME)
-      .list('', { limit: 100, sortBy: { column: 'created_at', order: 'desc' } });
+      .list('', { limit: perPage, offset, sortBy: { column: 'created_at', order: 'desc' } });
 
     if (error) {
       console.error('Supabase list error:', error);

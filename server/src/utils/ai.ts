@@ -23,7 +23,7 @@ export const generateAiArticle = async (): Promise<GeneratedArticle> => {
     "https://images.unsplash.com/photo-1577140917170-285929fb55b7?auto=format&fit=crop&q=80&w=800",
     "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&q=80&w=800",
     "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=800",
-    "https://images.unsplash.com/photo-1507308209625-83c5e2a7629e?auto=format&fit=crop&q=80&w=800",
+    "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=800",
     "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&q=80&w=800"
   ];
   const image_url = images[Math.floor(Math.random() * images.length)];

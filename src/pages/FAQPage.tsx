@@ -45,10 +45,10 @@ const FAQPage: React.FC = () => {
   const categories = Array.from(new Set(faqs.map((f) => f.category)));
 
   return (
-    <div className="pt-32 max-w-4xl mx-auto px-6 space-y-10 min-h-[70vh] font-sans">
+    <div className="pt-28 sm:pt-32 max-w-4xl mx-auto px-4 sm:px-6 space-y-6 sm:space-y-10 min-h-[70vh] font-sans">
       {/* Header */}
       <div className="text-center space-y-2 max-w-xl mx-auto">
-        <h1 className="text-4xl font-serif font-bold">Frequently Asked Questions</h1>
+        <h1 className="text-2xl sm:text-4xl font-serif font-bold">Frequently Asked Questions</h1>
         <p className="text-xs text-muted-foreground">
           Find quick answers about material quality, shipping fees, custom adjustments, and using our 3D AR viewer.
         </p>

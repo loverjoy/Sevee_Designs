@@ -4,8 +4,8 @@ import { Mail, Phone, MapPin, Instagram, Facebook, Twitter } from 'lucide-react'
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-primary text-primary-foreground mt-20 border-t border-border">
-      <div className="max-w-7xl mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+    <footer className="bg-primary text-primary-foreground mt-12 sm:mt-20 border-t border-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12">
         {/* Brand Info */}
         <div className="space-y-4">
           <Link to="/" className="flex items-center space-x-3 group">

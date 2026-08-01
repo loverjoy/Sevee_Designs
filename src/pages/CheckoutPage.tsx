@@ -285,7 +285,7 @@ const CheckoutPage: React.FC = () => {
   }
 
   return (
-    <div className="pt-32 max-w-7xl mx-auto px-6 space-y-10 min-h-screen font-sans">
+    <div className="pt-28 sm:pt-32 max-w-7xl mx-auto px-4 sm:px-6 space-y-6 sm:space-y-10 min-h-screen font-sans">
       {/* Checkout Progress Stepper */}
       <div className="flex items-center justify-center space-x-4 max-w-md mx-auto text-xs uppercase tracking-wider font-semibold">
         <span className={`${step === 1 ? 'text-accent border-b-2 border-accent' : 'text-muted-foreground'}`}>

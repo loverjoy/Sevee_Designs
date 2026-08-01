@@ -121,25 +121,25 @@ const ShopPage: React.FC = () => {
   };
 
   return (
-    <div className="pt-32 max-w-7xl mx-auto px-6 space-y-10 min-h-screen">
+    <div className="pt-28 sm:pt-32 max-w-7xl mx-auto px-4 sm:px-6 space-y-6 sm:space-y-10 min-h-screen">
       {/* Page Header */}
       <div className="text-center space-y-2 max-w-xl mx-auto">
-        <h1 className="text-4xl font-serif font-bold">Shop Collection</h1>
+        <h1 className="text-2xl sm:text-4xl font-serif font-bold">Shop Collection</h1>
         <p className="text-xs text-muted-foreground font-sans leading-relaxed">
           Browse our architectural furniture catalog. Sourced sustainably, designed with geometry, and built to last.
         </p>
       </div>
 
       {/* Filter and Search Bar Container */}
-      <div className="border border-border p-4 bg-card shadow-card flex flex-col md:flex-row gap-4 justify-between items-center">
+      <div className="border border-border p-3 sm:p-4 bg-card shadow-card flex flex-col gap-3 sm:gap-4 justify-between items-stretch sm:items-center">
         {/* Search form */}
-        <form onSubmit={handleSearchSubmit} className="relative w-full md:max-w-xs flex border border-border bg-background">
+        <form onSubmit={handleSearchSubmit} className="relative w-full sm:max-w-xs flex border border-border bg-background">
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search items..."
-            className="w-full bg-transparent border-none outline-none py-2 px-3 text-xs font-sans placeholder-muted-foreground text-foreground"
+            className="w-full bg-transparent border-none outline-none py-2.5 px-3 text-xs font-sans placeholder-muted-foreground text-foreground"
           />
           <button type="submit" className="px-3 text-muted-foreground hover:text-accent border-l border-border bg-secondary">
             <Search size={14} />
@@ -147,14 +147,14 @@ const ShopPage: React.FC = () => {
         </form>
 
         {/* Dropdowns */}
-        <div className="flex flex-wrap items-center gap-4 w-full md:w-auto justify-end font-sans">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4 w-full justify-between sm:justify-end font-sans">
           {/* Category Dropdown */}
           <div className="flex items-center space-x-2 w-full sm:w-auto">
             <SlidersHorizontal size={14} className="text-muted-foreground shrink-0" />
             <select
               value={selectedCategory}
               onChange={handleCategoryChange}
-              className="bg-background border border-border text-xs py-2 px-3 outline-none text-foreground w-full sm:w-40"
+              className="bg-background border border-border text-xs py-2.5 px-3 outline-none text-foreground w-full sm:w-40"
             >
               <option value="">All Categories</option>
               {categories.map((cat) => (
@@ -169,7 +169,7 @@ const ShopPage: React.FC = () => {
           <select
             value={sortBy}
             onChange={handleSortChange}
-            className="bg-background border border-border text-xs py-2 px-3 outline-none text-foreground w-full sm:w-40"
+            className="bg-background border border-border text-xs py-2.5 px-3 outline-none text-foreground w-full sm:w-40"
           >
             <option value="newest">Sort by: Newest</option>
             <option value="price_asc">Price: Low to High</option>
@@ -212,7 +212,7 @@ const ShopPage: React.FC = () => {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -221,11 +221,11 @@ const ShopPage: React.FC = () => {
 
         {/* Load More Paginator */}
         {products.length < totalCount && (
-          <div className="text-center pt-8">
+          <div className="text-center pt-6 sm:pt-8">
             <button
               onClick={loadMore}
               disabled={loadingMore}
-              className="border border-primary hover:bg-primary hover:text-primary-foreground text-primary font-sans text-xs font-bold uppercase tracking-wider px-8 py-3.5 inline-flex items-center space-x-2 disabled:opacity-50 transition-colors"
+              className="border border-primary hover:bg-primary hover:text-primary-foreground text-primary font-sans text-xs font-bold uppercase tracking-wider px-6 sm:px-8 py-3 sm:py-3.5 inline-flex items-center space-x-2 disabled:opacity-50 transition-colors"
             >
               {loadingMore ? (
                 <>

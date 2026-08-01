@@ -83,7 +83,7 @@ const ProductDetailPage: React.FC = () => {
   const isLowStock = product.stock_quantity > 0 && product.stock_quantity < 5;
 
   return (
-    <div className="pt-32 max-w-7xl mx-auto px-6 space-y-16 min-h-screen">
+    <div className="pt-28 sm:pt-32 max-w-7xl mx-auto px-4 sm:px-6 space-y-10 sm:space-y-16 min-h-screen">
       {/* Back Button */}
       <Link to="/shop" className="inline-flex items-center space-x-2 text-xs font-sans text-muted-foreground hover:text-foreground font-semibold uppercase tracking-wider">
         <ArrowLeft size={14} />
@@ -91,7 +91,7 @@ const ProductDetailPage: React.FC = () => {
       </Link>
 
       {/* Main product info layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-start">
         
         {/* Left Column: Image Gallery */}
         <div className="space-y-4">
@@ -105,12 +105,12 @@ const ProductDetailPage: React.FC = () => {
 
           {/* Thumbnail row */}
           {product.images && product.images.length > 1 && (
-            <div className="flex space-x-4 overflow-x-auto pb-2">
+            <div className="flex space-x-2.5 sm:space-x-4 overflow-x-auto pb-2">
               {product.images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImage(img)}
-                  className={`w-20 h-20 bg-secondary border shrink-0 overflow-hidden shadow-card transition-all ${
+                  className={`w-16 h-16 sm:w-20 sm:h-20 bg-secondary border shrink-0 overflow-hidden shadow-card transition-all ${
                     activeImage === img ? 'border-accent ring-1 ring-accent' : 'border-border hover:border-muted-foreground'
                   }`}
                 >
@@ -221,14 +221,14 @@ const ProductDetailPage: React.FC = () => {
       </div>
 
       {/* Specifications Table (JSONB columns) */}
-      <section className="border-t border-border pt-12">
-        <h2 className="text-2xl font-serif font-bold mb-6">Specifications</h2>
+      <section className="border-t border-border pt-8 sm:pt-12">
+        <h2 className="text-xl sm:text-2xl font-serif font-bold mb-4 sm:mb-6">Specifications</h2>
         {product.specifications && Object.keys(product.specifications).length > 0 ? (
           <div className="border border-border bg-card shadow-card max-w-2xl font-sans">
             {Object.entries(product.specifications).map(([key, value], idx) => (
-              <div key={idx} className={`grid grid-cols-3 text-xs p-3.5 ${idx % 2 === 0 ? 'bg-secondary/40' : 'bg-card'} border-b border-border last:border-b-0`}>
-                <span className="font-bold text-foreground col-span-1">{key}</span>
-                <span className="text-muted-foreground col-span-2">{value}</span>
+              <div key={idx} className={`flex flex-col sm:grid sm:grid-cols-3 text-xs p-3 sm:p-3.5 ${idx % 2 === 0 ? 'bg-secondary/40' : 'bg-card'} border-b border-border last:border-b-0`}>
+                <span className="font-bold text-foreground sm:col-span-1 mb-1 sm:mb-0">{key}</span>
+                <span className="text-muted-foreground sm:col-span-2">{String(value)}</span>
               </div>
             ))}
           </div>

@@ -78,8 +78,8 @@ const Header: React.FC = () => {
 
 
         <div
-          className={`max-w-7xl mx-auto px-6 flex items-center justify-between transition-all duration-300 ${
-            scrolled ? 'py-4' : 'py-6'
+          className={`max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between transition-all duration-300 ${
+            scrolled ? 'py-3 sm:py-4' : 'py-4 sm:py-6'
           }`}
         >
           {/* Logo */}
@@ -108,7 +108,7 @@ const Header: React.FC = () => {
           </nav>
 
           {/* Action Icons */}
-          <div className="flex items-center space-x-5 text-foreground">
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 text-foreground">
             {/* Search Icon */}
             <button
               onClick={() => setSearchOpen(true)}
@@ -121,24 +121,24 @@ const Header: React.FC = () => {
             {/* Dark Mode Toggle */}
             <button
               onClick={toggleTheme}
-              className="hover:text-accent transition-colors p-1"
+              className="hover:text-accent transition-colors p-1 hidden sm:block"
               aria-label="Toggle Theme"
             >
               {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
             </button>
 
-            {/* Currency Selector */}
-            <div className="relative font-sans text-xs font-semibold flex items-center">
+            {/* Currency Selector - Hidden on smallest screens */}
+            <div className="relative font-sans text-xs font-semibold items-center hidden sm:flex">
               <select
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
-                className="bg-background text-foreground border border-border px-2 py-1 focus:outline-none cursor-pointer hover:text-accent hover:border-accent transition-colors font-sans text-xs font-semibold uppercase rounded-none"
+                className="bg-background text-foreground border border-border px-2 py-1 focus:outline-none cursor-pointer hover:text-accent hover:border-accent transition-colors font-sans text-xs font-semibold uppercase rounded-none w-20"
                 aria-label="Change Currency"
               >
-                <option value="GHS">GHS (GH₵)</option>
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
+                <option value="GHS">GHS</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
               </select>
             </div>
 
@@ -215,7 +215,7 @@ const Header: React.FC = () => {
 
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-background border-b border-border absolute left-0 w-full px-6 py-6 space-y-4 shadow-card">
+          <div className="md:hidden bg-background border-b border-border absolute left-0 w-full px-4 sm:px-6 py-6 space-y-4 shadow-card">
             <nav className="flex flex-col space-y-4 font-sans font-medium text-base">
               <Link to="/" onClick={() => setMobileMenuOpen(false)} className="hover:text-accent">Home</Link>
               <Link to="/shop" onClick={() => setMobileMenuOpen(false)} className="hover:text-accent">Shop</Link>
@@ -223,6 +223,29 @@ const Header: React.FC = () => {
               <Link to="/faq" onClick={() => setMobileMenuOpen(false)} className="hover:text-accent">FAQs</Link>
               <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="hover:text-accent">Our Story</Link>
               <Link to="/contact" onClick={() => setMobileMenuOpen(false)} className="hover:text-accent">Contact</Link>
+              {/* Mobile Theme Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="flex items-center space-x-2 hover:text-accent text-left"
+              >
+                {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+                <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>
+              </button>
+              {/* Mobile Currency Selector */}
+              <div className="flex items-center space-x-2">
+                <span className="text-sm">Currency:</span>
+                <select
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                  className="bg-background text-foreground border border-border px-2 py-1 text-xs font-sans font-semibold uppercase"
+                  aria-label="Change Currency"
+                >
+                  <option value="GHS">GHS (GH₵)</option>
+                  <option value="USD">USD ($)</option>
+                  <option value="EUR">EUR (€)</option>
+                  <option value="GBP">GBP (£)</option>
+                </select>
+              </div>
               {user && (
                 <>
                   <hr className="border-border" />

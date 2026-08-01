@@ -37,9 +37,9 @@ const HomePage: React.FC = () => {
   }, []);
 
   return (
-    <div className="pt-24 space-y-24">
+    <div className="pt-16 sm:pt-24 space-y-16 sm:space-y-24">
       {/* 1. Hero Section */}
-      <section className="relative h-[85vh] bg-primary flex items-center overflow-hidden">
+      <section className="relative h-[70vh] sm:h-[85vh] bg-primary flex items-center overflow-hidden">
         {/* Dark image background overlay */}
         <div className="absolute inset-0 z-0">
           <img
@@ -49,55 +49,55 @@ const HomePage: React.FC = () => {
           />
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 w-full relative z-10 text-primary-foreground space-y-6">
-          <span className="text-accent text-xs font-sans font-bold tracking-[0.3em] uppercase block fade-up">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full relative z-10 text-primary-foreground space-y-4 sm:space-y-6">
+          <span className="text-accent text-[10px] sm:text-xs font-sans font-bold tracking-[0.3em] uppercase block fade-up">
             Architectural Luxury
           </span>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-serif leading-tight max-w-3xl fade-up" style={{ color: 'hsl(36, 20%, 93%)' }}>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold font-serif leading-tight max-w-3xl fade-up" style={{ color: 'hsl(36, 20%, 93%)' }}>
             Crafting spaces that inspire
           </h1>
-          <p className="font-sans text-sm md:text-base text-muted-foreground/80 max-w-xl leading-relaxed fade-up">
-            Handcrafted solid wood furniture designed with structural precision and finished in natural oils. Elevate your space with Accra’s premier furniture builders.
+          <p className="font-sans text-xs sm:text-sm md:text-base text-muted-foreground/80 max-w-xl leading-relaxed fade-up">
+            Handcrafted solid wood furniture designed with structural precision and finished in natural oils. Elevate your space with Accra's premier furniture builders.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 pt-4 fade-up">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-3 sm:pt-4 fade-up">
             <Link
               to="/shop"
-              className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-3.5 text-xs font-sans font-bold uppercase tracking-wider text-center"
+              className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 sm:px-8 py-3 sm:py-3.5 text-xs font-sans font-bold uppercase tracking-wider text-center"
             >
               Shop Collection
             </Link>
             <Link
               to="/about"
-              className="border border-primary-foreground hover:bg-primary-foreground hover:text-primary text-primary-foreground px-8 py-3.5 text-xs font-sans font-bold uppercase tracking-wider text-center transition-all duration-300"
+              className="border border-primary-foreground hover:bg-primary-foreground hover:text-primary text-primary-foreground px-6 sm:px-8 py-3 sm:py-3.5 text-xs font-sans font-bold uppercase tracking-wider text-center transition-all duration-300"
             >
               Our Story
             </Link>
           </div>
 
           {/* Floating Stat Counters */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-12 border-t border-primary-foreground/10 max-w-4xl fade-up">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pt-8 sm:pt-12 border-t border-primary-foreground/10 max-w-4xl fade-up">
             <div>
-              <span className="font-serif text-3xl font-bold text-accent">500+</span>
-              <span className="block text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Products Built</span>
+              <span className="font-serif text-2xl sm:text-3xl font-bold text-accent">500+</span>
+              <span className="block text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Products Built</span>
             </div>
             <div>
-              <span className="font-serif text-3xl font-bold text-accent">10+ Yrs</span>
-              <span className="block text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Design Experience</span>
+              <span className="font-serif text-2xl sm:text-3xl font-bold text-accent">10+ Yrs</span>
+              <span className="block text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Design Experience</span>
             </div>
             <div>
-              <span className="font-serif text-3xl font-bold text-accent">100%</span>
-              <span className="block text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Hardwood Sourced</span>
+              <span className="font-serif text-2xl sm:text-3xl font-bold text-accent">100%</span>
+              <span className="block text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Hardwood Sourced</span>
             </div>
             <div>
-              <span className="font-serif text-3xl font-bold text-accent">GHS 0</span>
-              <span className="block text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Accra Delivery</span>
+              <span className="font-serif text-2xl sm:text-3xl font-bold text-accent">GHS 0</span>
+              <span className="block text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Accra Delivery</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* 2. Brand Values Snapshot */}
-      <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
         <div className="border border-border p-6 space-y-3 shadow-card">
           <Compass className="text-accent" size={24} />
           <h3 className="font-serif text-lg font-bold">Custom Craftsmanship</h3>
@@ -129,17 +129,17 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* 3. Featured Products Grid */}
-      <section className="max-w-7xl mx-auto px-6 space-y-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 space-y-6 sm:space-y-8">
         <div className="flex justify-between items-baseline border-b border-border pb-4">
-          <h2 className="text-2xl md:text-3xl font-bold font-serif">Featured Collection</h2>
-          <Link to="/shop" className="text-xs font-sans font-bold text-accent hover:text-foreground flex items-center space-x-1 uppercase tracking-wider transition-colors">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold font-serif">Featured Collection</h2>
+          <Link to="/shop" className="text-[10px] sm:text-xs font-sans font-bold text-accent hover:text-foreground flex items-center space-x-1 uppercase tracking-wider transition-colors">
             <span>View All</span>
             <ArrowRight size={14} />
           </Link>
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="animate-pulse border border-border h-80 bg-secondary"></div>
             ))}
@@ -147,7 +147,7 @@ const HomePage: React.FC = () => {
         ) : featuredProducts.length === 0 ? (
           <p className="text-center font-sans text-muted-foreground py-10">No featured products found.</p>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
             {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -156,8 +156,8 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* 4. AR Augmented Reality - Under Construction */}
-      <section className="bg-secondary/40 border-y border-border py-16">
-        <div className="max-w-7xl mx-auto px-6 text-center space-y-6">
+      <section className="bg-secondary/40 border-y border-border py-10 sm:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center space-y-4 sm:space-y-6">
           <span className="text-accent text-[10px] font-sans font-bold uppercase tracking-widest">
             Coming Soon
           </span>
@@ -174,7 +174,7 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* 5. Brand Teaser & Story */}
-      <section className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 items-center">
         <div className="aspect-[4/3] bg-secondary border border-border overflow-hidden shadow-card">
           <img
             src="/logo.jpg"
@@ -182,7 +182,7 @@ const HomePage: React.FC = () => {
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <span className="text-accent text-[10px] font-sans font-bold uppercase tracking-widest">
             Made in Ghana
           </span>
@@ -203,16 +203,16 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* 6. Blog Preview Section */}
-      <section className="max-w-7xl mx-auto px-6 space-y-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 space-y-6 sm:space-y-8 pb-8">
         <div className="flex justify-between items-baseline border-b border-border pb-4">
-          <h2 className="text-2xl md:text-3xl font-bold font-serif">Journal</h2>
-          <Link to="/blog" className="text-xs font-sans font-bold text-accent hover:text-foreground flex items-center space-x-1 uppercase tracking-wider transition-colors">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold font-serif">Journal</h2>
+          <Link to="/blog" className="text-[10px] sm:text-xs font-sans font-bold text-accent hover:text-foreground flex items-center space-x-1 uppercase tracking-wider transition-colors">
             <span>Read All</span>
             <ArrowRight size={14} />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
           {blogs.map((blog) => (
             <div key={blog.id} className="group border border-border bg-card shadow-card hover:shadow-hover transition-all flex flex-col h-full">
               <div className="aspect-[16/10] overflow-hidden bg-secondary">

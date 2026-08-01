@@ -208,16 +208,16 @@ const Chatbot: React.FC = () => {
       {/* Floating Action Button (FAB) */}
       <button
         onClick={handleToggle}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground border border-border shadow-hover transition-all duration-300 cursor-pointer flex items-center justify-center rounded-none group"
+        className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 w-12 h-12 sm:w-14 sm:h-14 bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground border border-border shadow-hover transition-all duration-300 cursor-pointer flex items-center justify-center rounded-none group"
         aria-label="Open Chatbot Support"
       >
         {isOpen ? (
-          <X className="w-6 h-6 transition-transform duration-300" />
+          <X className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300" />
         ) : (
           <div className="relative">
-            <MessageSquare className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+            <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 group-hover:scale-110 transition-transform duration-300" />
             {hasNewMessageBadge && (
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-accent ring-2 ring-background animate-pulse" />
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-accent ring-2 ring-background animate-pulse" />
             )}
           </div>
         )}
@@ -227,17 +227,17 @@ const Chatbot: React.FC = () => {
       {isOpen && (
         <div
           ref={chatWindowRef}
-          className="fixed bottom-6 right-6 md:bottom-24 md:right-6 z-50 w-[calc(100vw-2rem)] md:w-[380px] h-[calc(100vh-6rem)] md:h-[550px] bg-background/95 backdrop-blur-md border border-border shadow-hover flex flex-col transition-all duration-300 animate-fade-in"
+          className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[calc(100vw-3rem)] md:w-[380px] h-[calc(100vh-10rem)] sm:h-[calc(100vh-8rem)] md:h-[550px] bg-background/95 backdrop-blur-md border border-border shadow-hover flex flex-col transition-all duration-300 animate-fade-in"
         >
           {/* Header */}
-          <div className="bg-primary text-primary-foreground p-4 flex items-center justify-between border-b border-border/20">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-accent flex items-center justify-center">
-                <Bot className="w-4 h-4 text-accent-foreground" />
+          <div className="bg-primary text-primary-foreground p-3 sm:p-4 flex items-center justify-between border-b border-border/20">
+            <div className="flex items-center space-x-2.5 sm:space-x-3">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-accent flex items-center justify-center">
+                <Bot className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent-foreground" />
               </div>
               <div>
-                <h3 className="font-serif text-sm tracking-wide font-bold">SeVee Assistant</h3>
-                <span className="text-[10px] text-muted-foreground/80 tracking-wider uppercase flex items-center">
+                <h3 className="font-serif text-xs sm:text-sm tracking-wide font-bold">SeVee Assistant</h3>
+                <span className="text-[9px] sm:text-[10px] text-muted-foreground/80 tracking-wider uppercase flex items-center">
                   <span className="w-1.5 h-1.5 bg-success mr-1.5" />
                   Online Support
                 </span>
@@ -247,7 +247,7 @@ const Chatbot: React.FC = () => {
               onClick={handleToggle} 
               className="text-primary-foreground/75 hover:text-primary-foreground transition-colors cursor-pointer"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
 
@@ -325,7 +325,7 @@ const Chatbot: React.FC = () => {
           </div>
 
           {/* Quick Suggestions Pills (shows when chat has no loading state or is empty) */}
-          <div className="px-4 py-2 border-t border-border/40 flex flex-wrap gap-1.5 bg-secondary/15">
+          <div className="px-3 sm:px-4 py-2 border-t border-border/40 flex flex-wrap gap-1 sm:gap-1.5 bg-secondary/15">
             <button
               onClick={() => handleSuggestionClick("Where is my order?")}
               className="px-2.5 py-1 text-[10px] font-sans font-medium tracking-wide border border-border hover:border-accent hover:text-accent bg-background cursor-pointer rounded-none flex items-center space-x-1 transition-colors"

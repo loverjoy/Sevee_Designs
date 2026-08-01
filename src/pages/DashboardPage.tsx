@@ -210,9 +210,9 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="pt-32 max-w-7xl mx-auto px-6 space-y-10 min-h-screen font-sans">
+    <div className="pt-28 sm:pt-32 max-w-7xl mx-auto px-4 sm:px-6 space-y-6 sm:space-y-10 min-h-screen font-sans">
       {/* Account Welcoming Grid */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border pb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border pb-4 sm:pb-6">
         <div>
           <h1 className="text-3xl font-serif font-bold text-foreground">My Account</h1>
           <p className="text-xs text-muted-foreground mt-1">
@@ -230,10 +230,10 @@ const DashboardPage: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
         {/* Navigation Sidebar (Scrollable row on mobile, sidebar list on desktop) */}
-        <div className="lg:col-span-1 overflow-x-auto lg:overflow-visible flex lg:flex-col border border-border bg-card shadow-card p-2 gap-1 shrink-0 scrollbar-none">
+        <div className="lg:col-span-1 overflow-x-auto lg:overflow-visible flex lg:flex-col border border-border bg-card shadow-card p-1.5 sm:p-2 gap-1 shrink-0 scrollbar-none">
           <button
             onClick={() => changeTab('overview')}
-            className={`px-4 py-3 text-left text-xs uppercase tracking-wider font-bold shrink-0 transition-colors w-full ${
+            className={`px-3 sm:px-4 py-2.5 sm:py-3 text-left text-[10px] sm:text-xs uppercase tracking-wider font-bold shrink-0 transition-colors whitespace-nowrap ${
               activeTab === 'overview' ? 'bg-primary text-primary-foreground' : 'hover:bg-secondary text-foreground'
             }`}
           >
@@ -241,7 +241,7 @@ const DashboardPage: React.FC = () => {
           </button>
           <button
             onClick={() => changeTab('orders')}
-            className={`px-4 py-3 text-left text-xs uppercase tracking-wider font-bold shrink-0 transition-colors w-full ${
+            className={`px-3 sm:px-4 py-2.5 sm:py-3 text-left text-[10px] sm:text-xs uppercase tracking-wider font-bold shrink-0 transition-colors whitespace-nowrap ${
               activeTab === 'orders' ? 'bg-primary text-primary-foreground' : 'hover:bg-secondary text-foreground'
             }`}
           >
@@ -249,7 +249,7 @@ const DashboardPage: React.FC = () => {
           </button>
           <button
             onClick={() => changeTab('wishlist')}
-            className={`px-4 py-3 text-left text-xs uppercase tracking-wider font-bold shrink-0 transition-colors w-full ${
+            className={`px-3 sm:px-4 py-2.5 sm:py-3 text-left text-[10px] sm:text-xs uppercase tracking-wider font-bold shrink-0 transition-colors whitespace-nowrap ${
               activeTab === 'wishlist' ? 'bg-primary text-primary-foreground' : 'hover:bg-secondary text-foreground'
             }`}
           >
@@ -257,7 +257,7 @@ const DashboardPage: React.FC = () => {
           </button>
           <button
             onClick={() => changeTab('profile')}
-            className={`px-4 py-3 text-left text-xs uppercase tracking-wider font-bold shrink-0 transition-colors w-full ${
+            className={`px-3 sm:px-4 py-2.5 sm:py-3 text-left text-[10px] sm:text-xs uppercase tracking-wider font-bold shrink-0 transition-colors whitespace-nowrap ${
               activeTab === 'profile' ? 'bg-primary text-primary-foreground' : 'hover:bg-secondary text-foreground'
             }`}
           >

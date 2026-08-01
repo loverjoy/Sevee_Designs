@@ -45,11 +45,11 @@ const CartPage: React.FC = () => {
   }
 
   return (
-    <div className="pt-32 max-w-7xl mx-auto px-6 space-y-10 min-h-[80vh] font-sans">
+    <div className="pt-28 sm:pt-32 max-w-7xl mx-auto px-4 sm:px-6 space-y-6 sm:space-y-10 min-h-[80vh] font-sans">
       {/* Header */}
-      <h1 className="text-3xl font-serif font-bold text-foreground">Shopping Cart</h1>
+      <h1 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">Shopping Cart</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-12 items-start">
         {/* Left Column: Items List */}
         <div className="lg:col-span-2 space-y-6">
           <div className="border border-border bg-card shadow-card divider-y divider-border">

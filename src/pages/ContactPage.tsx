@@ -47,10 +47,10 @@ const ContactPage: React.FC = () => {
   const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_KEY}&q=Bebere+Oduom,+Kumasi,+Ashanti,+Ghana`;
 
   return (
-    <div className="pt-32 max-w-7xl mx-auto px-6 space-y-16 min-h-screen font-sans">
+    <div className="pt-28 sm:pt-32 max-w-7xl mx-auto px-4 sm:px-6 space-y-10 sm:space-y-16 min-h-screen font-sans">
       {/* Header */}
       <div className="text-center space-y-2 max-w-xl mx-auto">
-        <h1 className="text-4xl font-serif font-bold">Contact Our Workshop</h1>
+        <h1 className="text-2xl sm:text-4xl font-serif font-bold">Contact Our Workshop</h1>
         <p className="text-xs text-muted-foreground">
           Reach out for custom size configurations, wholesale requests, or visit our Kumasi showroom.
         </p>

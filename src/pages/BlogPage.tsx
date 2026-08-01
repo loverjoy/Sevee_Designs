@@ -58,10 +58,10 @@ const BlogListPage: React.FC = () => {
   }
 
   return (
-    <div className="pt-32 max-w-7xl mx-auto px-6 space-y-12 min-h-[70vh] font-sans">
+    <div className="pt-28 sm:pt-32 max-w-7xl mx-auto px-4 sm:px-6 space-y-8 sm:space-y-12 min-h-[70vh] font-sans">
       {/* Header */}
       <div className="text-center space-y-2 max-w-xl mx-auto">
-        <h1 className="text-4xl font-serif font-bold">The Journal</h1>
+        <h1 className="text-2xl sm:text-4xl font-serif font-bold">The Journal</h1>
         <p className="text-xs text-muted-foreground">
           Stories about wood carpentry, interior configuration ideas, and updates from our Accra joinery workshop.
         </p>

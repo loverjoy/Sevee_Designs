@@ -145,7 +145,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="pt-36 max-w-md mx-auto px-6 min-h-[80vh] flex flex-col justify-center space-y-8 font-sans">
+    <div className="pt-32 sm:pt-36 max-w-md mx-auto px-4 sm:px-6 min-h-[80vh] flex flex-col justify-center space-y-6 sm:space-y-8 font-sans">
       {/* Brand Logo & Tag */}
       <div className="text-center space-y-2">
         <h2 className="font-serif text-3xl font-bold">Welcome to SeVee</h2>

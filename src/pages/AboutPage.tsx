@@ -11,7 +11,7 @@ const AboutPage: React.FC = () => {
   });
 
   return (
-    <div className="pt-32 max-w-7xl mx-auto px-6 space-y-20 min-h-screen font-sans">
+    <div className="pt-28 sm:pt-32 max-w-7xl mx-auto px-4 sm:px-6 space-y-12 sm:space-y-20 min-h-screen font-sans">
       
       {/* 1. Header Hero section */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -118,7 +118,7 @@ const AboutPage: React.FC = () => {
       </section>
 
       {/* 4. Leadership & Team Section */}
-      <section className="space-y-12 pb-16 border-t border-border pt-16">
+      <section className="space-y-8 sm:space-y-12 pb-12 sm:pb-16 border-t border-border pt-10 sm:pt-16">
         <div className="text-center space-y-2 max-w-lg mx-auto">
           <span className="text-accent text-xs font-sans font-bold tracking-[0.3em] uppercase block">
             Meet the Team
@@ -129,7 +129,7 @@ const AboutPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 sm:gap-8">
           {[
             {
               name: 'Seth Amankwaa Kwarteng',

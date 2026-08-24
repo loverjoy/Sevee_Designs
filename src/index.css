@@ -1,0 +1,221 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+  --shadow-card: 0 1px 3px rgba(28, 27, 26, 0.08), 0 1px 2px rgba(28, 27, 26, 0.06);
+  --shadow-hover: 0 4px 16px rgba(28, 27, 26, 0.12), 0 2px 6px rgba(28, 27, 26, 0.08);
+  
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
+  
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+}
+
+:root {
+  --radius: 0rem;  /* Sharp architectural corners — NO border radius */
+
+  --background:  40 33% 97%;   /* #F9F8F6 warm off-white */
+  --foreground:  20 7%  11%;   /* #1C1B1A deep charcoal */
+  --card:        40 33% 97%;
+  --card-foreground: 20 7% 11%;
+  --popover:     0 0% 100%;
+  --popover-foreground: 20 7% 11%;
+
+  --primary:     20 7%  11%;   /* deep charcoal */
+  --primary-foreground: 40 33% 97%;
+
+  --secondary:   36 20% 93%;   /* #EDE9E3 warm light grey */
+  --secondary-foreground: 20 7% 11%;
+
+  --muted:       36 15% 91%;
+  --muted-foreground: 20 5% 42%;
+
+  --accent:      22 41% 52%;   /* #B87354 muted terracotta — brand identity */
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 30 12% 82%;
+  --input:  30 12% 82%;
+  --ring:   20 7%  11%;
+
+  --success: 142 71% 45%;   --success-foreground: 0 0% 100%;
+  --warning: 38 92%  50%;   --warning-foreground: 20 7% 11%;
+  --info:    217 91% 60%;   --info-foreground:    0 0% 100%;
+
+  --gold: 38 68% 56%;
+}
+
+.dark {
+  --background:  20 10% 8%;
+  --foreground:  40 20% 92%;
+  --card:        20 8%  11%;
+  --card-foreground: 40 20% 92%;
+  --popover:     20 8%  11%;
+  --popover-foreground: 40 20% 92%;
+  --primary:     40 20% 92%;
+  --primary-foreground: 20 10% 8%;
+  --secondary:   20 8%  16%;
+  --secondary-foreground: 40 20% 92%;
+  --muted:       20 8%  16%;
+  --muted-foreground: 30 8% 62%;
+  --accent:      22 41% 52%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 62% 40%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 20 8% 20%;
+  --input:  20 8% 20%;
+  --ring:   40 20% 80%;
+  --success: 142 60% 40%;  --success-foreground: 0 0% 100%;
+  --warning: 38 80%  45%;  --warning-foreground: 0 0% 100%;
+  --info:    217 80% 55%;  --info-foreground:    0 0% 100%;
+}
+
+/* Base resets & layouts */
+body {
+  font-family: var(--font-sans);
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  line-height: 1.25;
+  color: hsl(var(--foreground));
+}
+
+* {
+  border-radius: var(--radius) !important;
+}
+
+/* Order status badges utility classes */
+.status-pending {
+  background-color: hsla(38, 92%, 50%, 0.15);
+  color: hsl(38, 92%, 50%);
+}
+.status-confirmed {
+  background-color: hsla(217, 91%, 60%, 0.15);
+  color: hsl(217, 91%, 60%);
+}
+.status-processing {
+  background-color: hsla(22, 41%, 52%, 0.15);
+  color: hsl(22, 41%, 52%);
+}
+.status-shipped {
+  background-color: hsla(217, 91%, 60%, 0.12);
+  color: hsl(217, 91%, 60%);
+}
+.status-delivered {
+  background-color: hsla(142, 71%, 45%, 0.15);
+  color: hsl(142, 71%, 45%);
+}
+.status-cancelled {
+  background-color: hsla(0, 72%, 51%, 0.12);
+  color: hsl(0, 72%, 51%);
+}
+.status-refunded {
+  background-color: hsla(20, 5%, 42%, 0.12);
+  color: hsl(20, 5%, 42%);
+}
+
+/* Payment status badges utility classes */
+.pay-completed {
+  background-color: hsla(142, 71%, 45%, 0.15);
+  color: hsl(142, 71%, 45%);
+}
+.pay-failed {
+  background-color: hsla(0, 72%, 51%, 0.12);
+  color: hsl(0, 72%, 51%);
+}
+.pay-pending {
+  background-color: hsla(38, 92%, 50%, 0.15);
+  color: hsl(38, 92%, 50%);
+}
+.pay-refunded {
+  background-color: hsla(20, 5%, 42%, 0.12);
+  color: hsl(20, 5%, 42%);
+}
+
+/* KPI icon containers styling */
+.kpi-icon-orders {
+  background-color: hsla(22, 41%, 52%, 0.12);
+  color: hsl(22, 41%, 52%);
+}
+.kpi-icon-products {
+  background-color: hsla(38, 92%, 50%, 0.12);
+  color: hsl(38, 92%, 50%);
+}
+.kpi-icon-customers {
+  background-color: hsla(142, 71%, 45%, 0.12);
+  color: hsl(142, 71%, 45%);
+}
+.kpi-icon-revenue {
+  background-color: hsla(217, 91%, 60%, 0.12);
+  color: hsl(217, 91%, 60%);
+}
+.kpi-icon-progress {
+  background-color: hsla(38, 92%, 50%, 0.12);
+  color: hsl(38, 92%, 50%);
+}
+
+/* Scroll reveal animations */
+.img-reveal {
+  animation: imgReveal 0.6s ease-out forwards;
+}
+.fade-up {
+  animation: fadeUp 0.6s ease-out forwards;
+}
+
+@keyframes imgReveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

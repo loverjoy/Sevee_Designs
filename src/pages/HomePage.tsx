@@ -1,0 +1,246 @@
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Compass, ShieldCheck, Heart, Sparkles } from 'lucide-react';
+import client from '../api/client';
+import ProductCard from '../components/ProductCard';
+import type { Product } from '../contexts/CartContext';
+import { resolveImageUrl } from '../lib/utils';
+import useSEO from '../hooks/useSEO';
+
+const HomePage: React.FC = () => {
+  useSEO({
+    title: 'Architectural Solid Hardwood Furniture',
+    description: "Handcrafted premium furniture designed with geometric precision. Sourced from sustainable Ghanaian hardwood. Accra's premier furniture builders.",
+    keywords: 'furniture Accra, premium furniture Ghana, custom hardwood furniture, solid wood furniture'
+  });
+
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+  const [blogs, setBlogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchHomeData = async () => {
+      try {
+        const featuredRes = await client.get('/products/featured');
+        setFeaturedProducts(featuredRes.data);
+
+        const blogRes = await client.get('/content/blogs');
+        setBlogs(blogRes.data.slice(0, 3));
+      } catch (error) {
+        console.error('Failed to load home page data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHomeData();
+  }, []);
+
+  return (
+    <div className="pt-16 sm:pt-24 space-y-16 sm:space-y-24">
+      {/* 1. Hero Section */}
+      <section className="relative h-[70vh] sm:h-[85vh] bg-primary flex items-center overflow-hidden">
+        {/* Dark image background overlay */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1600"
+            alt="SeVee Designs Luxury Living Room"
+            className="w-full h-full object-cover opacity-35"
+          />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full relative z-10 text-primary-foreground space-y-4 sm:space-y-6">
+          <span className="text-accent text-[10px] sm:text-xs font-sans font-bold tracking-[0.3em] uppercase block fade-up">
+            Architectural Luxury
+          </span>
+          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold font-serif leading-tight max-w-3xl fade-up" style={{ color: 'hsl(36, 20%, 93%)' }}>
+            Crafting spaces that inspire
+          </h1>
+          <p className="font-sans text-xs sm:text-sm md:text-base text-muted-foreground/80 max-w-xl leading-relaxed fade-up">
+            Handcrafted solid wood furniture designed with structural precision and finished in natural oils. Elevate your space with Accra's premier furniture builders.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-3 sm:pt-4 fade-up">
+            <Link
+              to="/shop"
+              className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 sm:px-8 py-3 sm:py-3.5 text-xs font-sans font-bold uppercase tracking-wider text-center"
+            >
+              Shop Collection
+            </Link>
+            <Link
+              to="/about"
+              className="border border-primary-foreground hover:bg-primary-foreground hover:text-primary text-primary-foreground px-6 sm:px-8 py-3 sm:py-3.5 text-xs font-sans font-bold uppercase tracking-wider text-center transition-all duration-300"
+            >
+              Our Story
+            </Link>
+          </div>
+
+          {/* Floating Stat Counters */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 pt-8 sm:pt-12 border-t border-primary-foreground/10 max-w-4xl fade-up">
+            <div>
+              <span className="font-serif text-2xl sm:text-3xl font-bold text-accent">500+</span>
+              <span className="block text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Products Built</span>
+            </div>
+            <div>
+              <span className="font-serif text-2xl sm:text-3xl font-bold text-accent">10+ Yrs</span>
+              <span className="block text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Design Experience</span>
+            </div>
+            <div>
+              <span className="font-serif text-2xl sm:text-3xl font-bold text-accent">100%</span>
+              <span className="block text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Hardwood Sourced</span>
+            </div>
+            <div>
+              <span className="font-serif text-2xl sm:text-3xl font-bold text-accent">GHS 0</span>
+              <span className="block text-[9px] sm:text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Accra Delivery</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Brand Values Snapshot */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+        <div className="border border-border p-6 space-y-3 shadow-card">
+          <Compass className="text-accent" size={24} />
+          <h3 className="font-serif text-lg font-bold">Custom Craftsmanship</h3>
+          <p className="text-xs text-muted-foreground font-sans leading-relaxed">
+            Tailor-made dimensions and carefully chosen timber to match your room’s unique architectural geometry.
+          </p>
+        </div>
+        <div className="border border-border p-6 space-y-3 shadow-card">
+          <Sparkles className="text-accent" size={24} />
+          <h3 className="font-serif text-lg font-bold">Natural Matte Oil</h3>
+          <p className="text-xs text-muted-foreground font-sans leading-relaxed">
+            Finished with biological oils instead of plastic varnish, keeping the wood grain tactile and responsive.
+          </p>
+        </div>
+        <div className="border border-border p-6 space-y-3 shadow-card">
+          <ShieldCheck className="text-accent" size={24} />
+          <h3 className="font-serif text-lg font-bold">10-Year Warranty</h3>
+          <p className="text-xs text-muted-foreground font-sans leading-relaxed">
+            We use mortise-and-tenon joinery and kiln-dried timber, allowing us to guarantee durability for a decade.
+          </p>
+        </div>
+        <div className="border border-border p-6 space-y-3 shadow-card">
+          <Heart className="text-accent" size={24} />
+          <h3 className="font-serif text-lg font-bold">Sustainably Sourced</h3>
+          <p className="text-xs text-muted-foreground font-sans leading-relaxed">
+            For every mahogany or teak tree felled for our collections, we fund replanting initiatives in local Ghana reserves.
+          </p>
+        </div>
+      </section>
+
+      {/* 3. Featured Products Grid */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 space-y-6 sm:space-y-8">
+        <div className="flex justify-between items-baseline border-b border-border pb-4">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold font-serif">Featured Collection</h2>
+          <Link to="/shop" className="text-[10px] sm:text-xs font-sans font-bold text-accent hover:text-foreground flex items-center space-x-1 uppercase tracking-wider transition-colors">
+            <span>View All</span>
+            <ArrowRight size={14} />
+          </Link>
+        </div>
+
+        {loading ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="animate-pulse border border-border h-80 bg-secondary"></div>
+            ))}
+          </div>
+        ) : featuredProducts.length === 0 ? (
+          <p className="text-center font-sans text-muted-foreground py-10">No featured products found.</p>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* 4. AR Augmented Reality - Under Construction */}
+      <section className="bg-secondary/40 border-y border-border py-10 sm:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center space-y-4 sm:space-y-6">
+          <span className="text-accent text-[10px] font-sans font-bold uppercase tracking-widest">
+            Coming Soon
+          </span>
+          <h2 className="text-3xl font-serif font-bold leading-tight">
+            3D & Augmented Reality
+          </h2>
+          <p className="font-sans text-xs text-muted-foreground leading-relaxed max-w-xl mx-auto">
+            Visualize furniture in your room before you buy. Our 3D AR viewer is currently under construction and will launch soon.
+          </p>
+          <div className="inline-flex items-center space-x-2 bg-accent/10 border border-accent/20 px-4 py-2">
+            <span className="text-accent text-[10px] font-sans font-bold uppercase tracking-wider">Under Construction</span>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Brand Teaser & Story */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 items-center">
+        <div className="aspect-[4/3] bg-secondary border border-border overflow-hidden shadow-card">
+          <img
+            src="/logo.jpg"
+            alt="SeVee Designs Joinery Studio"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="space-y-4 sm:space-y-6">
+          <span className="text-accent text-[10px] font-sans font-bold uppercase tracking-widest">
+            Made in Ghana
+          </span>
+          <h2 className="text-3xl font-serif font-bold leading-tight">
+            Furniture built for generations
+          </h2>
+          <p className="font-sans text-xs text-muted-foreground leading-relaxed">
+            Founded in Accra, SeVee Designs merges structural architectural geometry with traditional Ghanaian joinery. We believe that furniture should not be disposable. Every piece of mahogany, teak, and oak we select is kiln-dried and handcrafted to withstand changes in tropical moisture, ensuring stability for generations.
+          </p>
+          <Link
+            to="/about"
+            className="text-xs font-sans font-bold text-accent hover:text-foreground inline-flex items-center space-x-1 uppercase tracking-wider transition-colors border-b border-accent pb-1"
+          >
+            <span>Learn About Our Studio</span>
+            <ArrowRight size={14} />
+          </Link>
+        </div>
+      </section>
+
+      {/* 6. Blog Preview Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 space-y-6 sm:space-y-8 pb-8">
+        <div className="flex justify-between items-baseline border-b border-border pb-4">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold font-serif">Journal</h2>
+          <Link to="/blog" className="text-[10px] sm:text-xs font-sans font-bold text-accent hover:text-foreground flex items-center space-x-1 uppercase tracking-wider transition-colors">
+            <span>Read All</span>
+            <ArrowRight size={14} />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
+          {blogs.map((blog) => (
+            <div key={blog.id} className="group border border-border bg-card shadow-card hover:shadow-hover transition-all flex flex-col h-full">
+              <div className="aspect-[16/10] overflow-hidden bg-secondary">
+                <img
+                  src={resolveImageUrl(blog.image_url) || '/logo.jpg'}
+                  alt={blog.title}
+                  className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
+                />
+              </div>
+              <div className="p-6 flex-grow flex flex-col justify-between space-y-4">
+                <div className="space-y-2">
+                  <span className="text-[10px] font-sans tracking-widest text-muted-foreground uppercase">{blog.category}</span>
+                  <Link to={`/blog/${blog.slug}`}>
+                    <h4 className="font-serif text-lg font-bold line-clamp-2 group-hover:text-accent transition-colors">{blog.title}</h4>
+                  </Link>
+                  <p className="text-xs text-muted-foreground font-sans line-clamp-3 leading-relaxed">{blog.excerpt}</p>
+                </div>
+                <Link to={`/blog/${blog.slug}`} className="text-[10px] font-sans font-bold text-foreground hover:text-accent uppercase tracking-wider flex items-center space-x-1 pt-2 transition-colors">
+                  <span>Read Article</span>
+                  <ArrowRight size={12} />
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default HomePage;

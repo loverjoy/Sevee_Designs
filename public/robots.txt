@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /salesperson
+
+Sitemap: https://seveedesigns.com/sitemap.xml

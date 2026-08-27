@@ -7,6 +7,7 @@ import { useWishlist } from '../contexts/WishlistContext';
 import { resolveImageUrl } from '../lib/utils';
 import { useAuth } from '../contexts/AuthContext';
 import useSEO from '../hooks/useSEO';
+import ImageLightbox from '../components/ImageLightbox';
 
 const ProductDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -24,6 +25,8 @@ const ProductDetailPage: React.FC = () => {
   const [activeImage, setActiveImage] = useState<string>('');
   const [quantity, setQuantity] = useState<number>(1);
   const [loading, setLoading] = useState(true);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -95,12 +98,23 @@ const ProductDetailPage: React.FC = () => {
         
         {/* Left Column: Image Gallery */}
         <div className="space-y-4">
-          <div className="aspect-[4/3] bg-secondary border border-border overflow-hidden relative shadow-card">
+          <div
+            className="aspect-[4/3] bg-secondary overflow-hidden relative shadow-card cursor-pointer group/img"
+            onClick={() => {
+              const idx = product.images?.indexOf(activeImage) ?? 0;
+              setLightboxIndex(idx >= 0 ? idx : 0);
+              setLightboxOpen(true);
+            }}
+          >
             <img
               src={resolveImageUrl(activeImage)}
               alt={product.name}
-              className="w-full h-full object-contain object-center p-4"
+              className="w-full h-full object-contain object-center p-4 group-hover/img:scale-105 transition-transform duration-500"
             />
+            {/* Zoom hint */}
+            <div className="absolute bottom-3 right-3 bg-background/70 backdrop-blur-sm px-2.5 py-1 text-[10px] font-sans font-bold uppercase tracking-wider text-foreground opacity-0 group-hover/img:opacity-100 transition-opacity">
+              Click to zoom
+            </div>
           </div>
 
           {/* Thumbnail row */}
@@ -109,8 +123,12 @@ const ProductDetailPage: React.FC = () => {
               {product.images.map((img, idx) => (
                 <button
                   key={idx}
-                  onClick={() => setActiveImage(img)}
-                  className={`w-16 h-16 sm:w-20 sm:h-20 bg-secondary border shrink-0 overflow-hidden shadow-card transition-all ${
+                  onClick={() => {
+                    setActiveImage(img);
+                    setLightboxIndex(idx);
+                    setLightboxOpen(true);
+                  }}
+                  className={`w-16 h-16 sm:w-20 sm:h-20 bg-secondary shrink-0 overflow-hidden shadow-card transition-all ${
                     activeImage === img ? 'border-accent ring-1 ring-accent' : 'border-border hover:border-muted-foreground'
                   }`}
                 >
@@ -239,6 +257,17 @@ const ProductDetailPage: React.FC = () => {
 
       {/* Desktop AR QR Code Overlay Modal - Disabled */}
       {/* Feature under construction */}
+
+      {/* Image Lightbox */}
+      {product.images && product.images.length > 0 && (
+        <ImageLightbox
+          images={product.images}
+          initialIndex={lightboxIndex}
+          isOpen={lightboxOpen}
+          onClose={() => setLightboxOpen(false)}
+          altText={product.name}
+        />
+      )}
     </div>
   );
 };

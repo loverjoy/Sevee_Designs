@@ -99,7 +99,7 @@ const ProductDetailPage: React.FC = () => {
         {/* Left Column: Image Gallery */}
         <div className="space-y-4">
           <div
-            className="aspect-[4/3] bg-secondary overflow-hidden relative shadow-card cursor-pointer group/img"
+            className="aspect-[4/3] bg-secondary border border-border overflow-hidden relative shadow-card cursor-pointer group/img"
             onClick={() => {
               const idx = product.images?.indexOf(activeImage) ?? 0;
               setLightboxIndex(idx >= 0 ? idx : 0);

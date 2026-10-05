@@ -285,6 +285,8 @@ const Chatbot: React.FC = () => {
                               <img
                                 src={resolveImageUrl(prod.images && prod.images[0])}
                                 alt={prod.name}
+                                loading="lazy"
+                                decoding="async"
                                 className="w-full aspect-square object-cover"
                               />
                               <h4 className="font-bold text-[10px] truncate group-hover:text-accent transition-colors">{prod.name}</h4>

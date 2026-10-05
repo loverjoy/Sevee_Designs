@@ -156,10 +156,10 @@ Content should be written in beautiful Markdown with multiple headings. Title sh
     };
   } catch (error) {
     console.error("Gemini Generation failed, falling back to mock:", error);
-    const fallbackTitle = `Sustainable Woodworking Trends ${Date.now()}`;
+    const fallbackTitle = "Sustainable Woodworking Trends";
     return {
       title: fallbackTitle,
-      slug: fallbackTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
+      slug: `${fallbackTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '')}-${Date.now()}`,
       excerpt: "Explore the emerging trends in ecological woodworking and sustainable design.",
       content: "### The Growth of Eco-Conscious Design\n\nSustainable design is more than a trend; it is a movement towards preserving our environment while creating beautiful pieces that last a lifetime.",
       image_url,

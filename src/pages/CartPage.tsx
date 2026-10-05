@@ -63,7 +63,7 @@ const CartPage: React.FC = () => {
                   {/* Image & Title */}
                   <div className="flex items-center space-x-4">
                     <div className="w-20 h-20 bg-secondary border border-border shrink-0 overflow-hidden shadow-card">
-                      <img src={imageUrl} alt={item.product.name} className="w-full h-full object-cover" />
+                      <img src={imageUrl} alt={item.product.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                     </div>
                     <div className="space-y-1">
                       <span className="text-[10px] text-muted-foreground tracking-widest uppercase">

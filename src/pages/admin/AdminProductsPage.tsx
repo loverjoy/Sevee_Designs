@@ -154,8 +154,10 @@ const AdminProductsPage: React.FC = () => {
                     <td className="p-4 font-bold text-foreground">
                       <div className="flex items-center space-x-3 min-w-0">
                         <img
-                          src={p.images && p.images.length > 0 ? resolveImageUrl(p.images[0]) : ''}
+                          src={p.images && p.images.length > 0 ? resolveImageUrl(p.images[0]) : '/logo.jpg'}
                           alt={p.name}
+                          loading="lazy"
+                          decoding="async"
                           className="w-10 h-10 object-cover bg-secondary border border-border shrink-0"
                         />
                         <div className="flex flex-col min-w-0">

@@ -31,3 +31,6 @@ server/uploads/
 .vercel
 server/Sevee_Designs1.env
 setupGoogleauth.md
+
+# Source photos (never served by the site; removed from repo)
+images_website/

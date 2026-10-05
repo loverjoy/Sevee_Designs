@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Compass, ShieldCheck, Heart, Sparkles } from 'lucide-react';
 import client from '../api/client';
 import ProductCard from '../components/ProductCard';
+import SafeImage from '../components/SafeImage';
 import type { Product } from '../contexts/CartContext';
 import { resolveImageUrl } from '../lib/utils';
 import useSEO from '../hooks/useSEO';
@@ -45,6 +46,9 @@ const HomePage: React.FC = () => {
           <img
             src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=1600"
             alt="SeVee Designs Luxury Living Room"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
             className="w-full h-full object-cover opacity-35"
           />
         </div>
@@ -179,6 +183,8 @@ const HomePage: React.FC = () => {
           <img
             src="/logo.jpg"
             alt="SeVee Designs Joinery Studio"
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover"
           />
         </div>
@@ -216,8 +222,8 @@ const HomePage: React.FC = () => {
           {blogs.map((blog) => (
             <div key={blog.id} className="group border border-border bg-card shadow-card hover:shadow-hover transition-all flex flex-col h-full">
               <div className="aspect-[16/10] overflow-hidden bg-secondary">
-                <img
-                  src={resolveImageUrl(blog.image_url) || '/logo.jpg'}
+                <SafeImage
+                  src={resolveImageUrl(blog.image_url)}
                   alt={blog.title}
                   className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
                 />

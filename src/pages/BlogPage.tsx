@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Loader2, ArrowLeft, Calendar, User, ArrowRight } from 'lucide-react';
 import client from '../api/client';
 import { formatDate, resolveImageUrl } from '../lib/utils';
+import SafeImage from '../components/SafeImage';
 import useSEO from '../hooks/useSEO';
 
 interface BlogPost {
@@ -74,8 +75,8 @@ const BlogListPage: React.FC = () => {
           {blogs.map((blog) => (
             <div key={blog.id} className="group border border-border bg-card shadow-card hover:shadow-hover transition-all flex flex-col h-full">
               <div className="aspect-[16/10] overflow-hidden bg-secondary border-b border-border">
-                <img
-                  src={resolveImageUrl(blog.image_url) || '/logo.jpg'}
+                <SafeImage
+                  src={resolveImageUrl(blog.image_url)}
                   alt={blog.title}
                   className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
                 />
@@ -186,9 +187,10 @@ const BlogDetailPage: React.FC<DetailProps> = ({ slug }) => {
 
       {/* Main Image */}
       <div className="aspect-[21/10] overflow-hidden bg-secondary border border-border shadow-card">
-        <img
-          src={resolveImageUrl(blog.image_url) || '/logo.jpg'}
+        <SafeImage
+          src={resolveImageUrl(blog.image_url)}
           alt={blog.title}
+          loading="eager"
           className="w-full h-full object-cover"
         />
       </div>

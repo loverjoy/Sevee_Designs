@@ -274,7 +274,7 @@ const SalespersonOrdersPage: React.FC = () => {
                           {expandedOrderItems.map((item) => (
                             <div key={item.id} className="flex justify-between items-center p-3 border-b border-border last:border-b-0 gap-4">
                               <div className="flex items-center space-x-3 min-w-0">
-                                <img src={item.product_image || ''} alt={item.product_name} className="w-8 h-8 object-cover bg-secondary border border-border shrink-0" />
+                                <img src={item.product_image || '/logo.jpg'} alt={item.product_name} loading="lazy" decoding="async" className="w-8 h-8 object-cover bg-secondary border border-border shrink-0" />
                                 <div className="min-w-0">
                                   <p className="font-bold truncate">{item.product_name}</p>
                                   <p className="text-[10px] text-muted-foreground">Quantity: {item.quantity} x {formatPrice(item.unit_price)}</p>

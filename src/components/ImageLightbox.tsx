@@ -136,6 +136,7 @@ const ImageLightbox: React.FC<ImageLightboxProps> = ({
       <img
         src={resolveImageUrl(images[currentIndex])}
         alt={`${altText} ${currentIndex + 1}`}
+        decoding="async"
         className="max-w-[95vw] max-h-[85vh] object-contain select-none"
         onClick={(e) => e.stopPropagation()}
         draggable={false}

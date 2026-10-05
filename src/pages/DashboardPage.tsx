@@ -550,7 +550,7 @@ const DashboardPage: React.FC = () => {
                                         {expandedOrderItems.map((item) => (
                                           <div key={item.id} className="flex justify-between items-center p-3 border-b border-border last:border-b-0 gap-4">
                                             <div className="flex items-center space-x-3 min-w-0">
-                                              <img src={item.product_image || ''} alt={item.product_name} className="w-8 h-8 object-cover bg-secondary border border-border shrink-0" />
+                                              <img src={item.product_image || '/logo.jpg'} alt={item.product_name} loading="lazy" decoding="async" className="w-8 h-8 object-cover bg-secondary border border-border shrink-0" />
                                               <div className="min-w-0">
                                                 <p className="font-bold truncate">{item.product_name}</p>
                                                 <p className="text-[10px] text-muted-foreground">Quantity: {item.quantity} x {formatPrice(item.unit_price)}</p>
@@ -591,7 +591,7 @@ const DashboardPage: React.FC = () => {
                     return (
                       <div key={prod.id} className="border border-border bg-card p-4 shadow-card flex flex-col h-full space-y-3">
                         <div className="aspect-square bg-secondary border border-border relative overflow-hidden">
-                          <img src={prod.images && prod.images.length > 0 ? resolveImageUrl(prod.images[0]) : ''} alt={prod.name} className="w-full h-full object-cover shadow-card" />
+                          <img src={prod.images && prod.images.length > 0 ? resolveImageUrl(prod.images[0]) : '/logo.jpg'} alt={prod.name} loading="lazy" decoding="async" className="w-full h-full object-cover shadow-card" />
                         </div>
                         <div className="flex-grow">
                           <h4 className="font-serif text-sm font-bold truncate">{prod.name}</h4>

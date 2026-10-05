@@ -109,6 +109,8 @@ const ProductDetailPage: React.FC = () => {
             <img
               src={resolveImageUrl(activeImage)}
               alt={product.name}
+              loading="eager"
+              decoding="async"
               className="w-full h-full object-contain object-center p-4 group-hover/img:scale-105 transition-transform duration-500"
             />
             {/* Zoom hint */}
@@ -132,7 +134,7 @@ const ProductDetailPage: React.FC = () => {
                     activeImage === img ? 'border-accent ring-1 ring-accent' : 'border-border hover:border-muted-foreground'
                   }`}
                 >
-                  <img src={resolveImageUrl(img)} alt={`${product.name} thumbnail ${idx}`} className="w-full h-full object-cover" />
+                  <img src={resolveImageUrl(img)} alt={`${product.name} thumbnail ${idx}`} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>

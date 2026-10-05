@@ -413,7 +413,7 @@ const AdminProductFormPage: React.FC = () => {
                   <div className="flex flex-wrap gap-3 pt-2">
                     {images.map((url, idx) => (
                       <div key={idx} className="w-16 h-16 bg-secondary border border-border relative overflow-hidden group shadow-card">
-                        <img src={url} alt="Uploaded" className="w-full h-full object-cover" />
+                        <img src={url} alt="Uploaded" loading="lazy" decoding="async" className="w-full h-full object-cover" />
                         <button
                           type="button"
                           onClick={() => handleRemoveImage(idx)}
@@ -468,7 +468,7 @@ const AdminProductFormPage: React.FC = () => {
                                 images.includes(img.url) ? 'border-accent ring-1 ring-accent' : 'border-border hover:border-muted-foreground'
                               }`}
                             >
-                              <img src={img.url} alt={img.name} className="w-full h-full object-cover" />
+                              <img src={img.url} alt={img.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                               {images.includes(img.url) && (
                                 <div className="absolute inset-0 bg-accent/20 flex items-center justify-center">
                                   <span className="text-[10px] font-bold text-accent">Added</span>

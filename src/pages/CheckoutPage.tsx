@@ -660,8 +660,10 @@ const CheckoutPage: React.FC = () => {
                 <div key={item.product.id} className="flex justify-between items-center gap-4 text-xs font-sans">
                   <div className="flex items-center space-x-3 truncate">
                     <img
-                      src={item.product.images && item.product.images.length > 0 ? resolveImageUrl(item.product.images[0]) : ''}
+                      src={item.product.images && item.product.images.length > 0 ? resolveImageUrl(item.product.images[0]) : '/logo.jpg'}
                       alt={item.product.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-10 h-10 object-cover bg-secondary border border-border shrink-0"
                     />
                     <div className="truncate">

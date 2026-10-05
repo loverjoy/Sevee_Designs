@@ -207,6 +207,8 @@ const AdminStaffPage: React.FC = () => {
                       <img
                         src={member.avatar_url || `https://api.dicebear.com/7.x/adventurer/svg?seed=${member.username}`}
                         alt={member.username}
+                        loading="lazy"
+                        decoding="async"
                         className="w-8 h-8 rounded-none border border-border"
                       />
                     </td>

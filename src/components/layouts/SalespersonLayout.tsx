@@ -31,7 +31,7 @@ const SalespersonLayout: React.FC = () => {
       <div className="md:hidden bg-card border-b border-border p-4 flex items-center justify-between z-30">
         <Link to="/salesperson" className="flex items-center space-x-2">
           <div className="w-8 h-8 rounded-full overflow-hidden border border-border flex items-center justify-center bg-card shrink-0">
-            <img src="/logo.jpg" alt="SeVee Designs Logo" className="w-full h-full object-cover" />
+            <img src="/logo.jpg" alt="SeVee Designs Logo" decoding="async" className="w-full h-full object-cover" />
           </div>
           <div className="flex flex-col">
             <span className="font-serif text-base font-bold text-foreground leading-tight">SEVEE SALES</span>
@@ -58,7 +58,7 @@ const SalespersonLayout: React.FC = () => {
           <div className="border-b border-border pb-4 hidden md:block">
             <Link to="/salesperson" className="flex items-center space-x-3 group">
               <div className="w-9 h-9 rounded-full overflow-hidden border border-border flex items-center justify-center bg-card shrink-0 transition-transform group-hover:scale-105 duration-300">
-                <img src="/logo.jpg" alt="SeVee Designs Logo" className="w-full h-full object-cover" />
+                <img src="/logo.jpg" alt="SeVee Designs Logo" decoding="async" className="w-full h-full object-cover" />
               </div>
               <div className="flex flex-col">
                 <span className="font-serif text-lg font-bold text-foreground leading-tight">SEVEE SALES</span>

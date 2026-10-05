@@ -39,6 +39,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             src={imageUrl}
             alt={product.name}
             loading="lazy"
+            decoding="async"
             className="w-full h-full object-contain object-center p-2 group-hover:scale-105 transition-transform duration-500"
           />
         </Link>

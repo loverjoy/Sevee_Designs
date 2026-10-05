@@ -85,7 +85,7 @@ const Header: React.FC = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 group">
             <div className="w-10 h-10 rounded-full overflow-hidden border border-border flex items-center justify-center bg-card shrink-0 transition-transform group-hover:scale-105 duration-300">
-              <img src="/logo.jpg" alt="SeVee Designs Logo" className="w-full h-full object-cover" />
+              <img src="/logo.jpg" alt="SeVee Designs Logo" decoding="async" className="w-full h-full object-cover" />
             </div>
             <div className="flex flex-col">
               <span className="font-serif text-xl font-bold tracking-tight text-foreground leading-tight">

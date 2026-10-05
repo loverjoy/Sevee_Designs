@@ -35,6 +35,8 @@ const AboutPage: React.FC = () => {
           <img
             src="https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=800"
             alt="Handcrafted Wood joinery detail"
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover"
           />
         </div>
@@ -98,6 +100,8 @@ const AboutPage: React.FC = () => {
           <img
             src="/logo.jpg"
             alt="SeVee Designs Custom interior showcase"
+            loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover"
           />
         </div>
@@ -167,6 +171,8 @@ const AboutPage: React.FC = () => {
                 <img
                   src={member.image}
                   alt={member.name}
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
